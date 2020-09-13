@@ -2,6 +2,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import Lighting from "../views/Lighting.vue"
+import Settings from "../views/Settings.vue"
+
 
 Vue.use(VueRouter);
 
@@ -11,6 +14,16 @@ const routes = [
     name: "Home",
     component: Home
   },
+  {
+    path: "/configuracoes",
+    name: "Configurações",
+    component: Settings
+  },
+  {
+    path: "/iluminacao",
+    name: "Iluminação",
+    component: Lighting
+  }
 ];
 
 const router = new VueRouter({
