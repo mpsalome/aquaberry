@@ -9,5 +9,5 @@ export default {
   getTemperatura() {
     var json = JSON.parse(get("http://192.168.15.48:3010/temperatura"));
     return json;
-  },
+  }
 };

@@ -46,17 +46,17 @@ export default {
   props: {},
   data: function() {
     return {
-      temperatura: 30,
+      temperatura: 0,
       ph: 8
     };
   },
-  mounted: function() {
-    console.log("teste");
-    try {
-      // console.log(API.getTemperatura());
-    } catch (error) {
-      // console.log(error)
-    }
+  created: function() {
+    console.log("Conectando ao websocket");
+    var ws = new WebSocket("ws://192.168.15.48:3011/temperatura");
+    var self = this
+    ws.onmessage = function(event) {
+      self.temperatura = Number(event.data);
+    };
   }
 };
 </script>
@@ -68,13 +68,13 @@ export default {
   .gauge__box {
     max-width: 80%;
     margin-left: 15vw;
-     &:not(:first-child) {
-        margin-top: 40px;
-      }
-    .gauge__text{
+    &:not(:first-child) {
+      margin-top: 40px;
+    }
+    .gauge__text {
       position: relative;
       bottom: 35%;
-      font-size: .8em;
+      font-size: 0.8em;
     }
   }
 }
@@ -85,7 +85,7 @@ export default {
       &:not(:first-child) {
         margin-top: 0;
       }
-      .gauge__text{
+      .gauge__text {
         font-size: 1.2em;
       }
     }
