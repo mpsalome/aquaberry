@@ -1,0 +1,27 @@
+{
+  "name": "aquaberry",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mpsalome/aquaberry.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mpsalome/aquaberry/issues"
+  },
+  "homepage": "https://github.com/mpsalome/aquaberry#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ds18x20": "^0.2.0",
+    "express": "^4.17.1",
+    "winston": "^3.3.3",
+    "ws": "^7.3.1"
+  },
+  "type": "module"
+}

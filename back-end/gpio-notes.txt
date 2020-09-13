@@ -1,0 +1,4 @@
+sensor de temperatura: 
+vermelho: 3.3v
+preto: gnd 
+amarelo: data (gpio4)
