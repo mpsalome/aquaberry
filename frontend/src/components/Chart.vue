@@ -1,6 +1,39 @@
 <template>
   <div class="chart">
-    <h1>teste</h1>
+    <div class="row">
+      <div class="gauge__box col-12 col-lg-7">
+        <VueSvgGauge
+          :start-angle="-110"
+          :end-angle="110"
+          :value="temperatura"
+          :separator-step="10"
+          :min="0"
+          :max="60"
+          :gauge-color="[
+            { offset: 0, color: '#5ab0f2' },
+            { offset: 100, color: '#f23729' }
+          ]"
+          :scale-interval="5"
+        />
+        <p class="gauge__text">Temperatura: {{ temperatura }}</p>
+      </div>
+      <div class="gauge__box col-12 col-lg-7">
+        <VueSvgGauge
+          :start-angle="-110"
+          :end-angle="110"
+          :value="ph"
+          :separator-step="1"
+          :min="0"
+          :max="14"
+          :gauge-color="[
+            { offset: 0, color: '#ff0000' },
+            { offset: 100, color: '#5b0eb3' }
+          ]"
+          :scale-interval="1"
+        />
+        <p class="gauge__text">pH: {{ ph }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -11,15 +44,51 @@ import API from "@/services/api";
 export default {
   name: "Chart",
   props: {},
+  data: function() {
+    return {
+      temperatura: 30,
+      ph: 8
+    };
+  },
   mounted: function() {
     console.log("teste");
     try {
       // console.log(API.getTemperatura());
     } catch (error) {
-      // console.log(error)      
+      // console.log(error)
     }
   }
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.chart {
+  display: inline-block;
+  margin: 0 auto;
+  .gauge__box {
+    max-width: 80%;
+    margin-left: 15vw;
+     &:not(:first-child) {
+        margin-top: 40px;
+      }
+    .gauge__text{
+      position: relative;
+      bottom: 35%;
+      font-size: .8em;
+    }
+  }
+}
+@media only screen and (min-width: 768px) {
+  .chart {
+    .gauge__box {
+      margin-left: 15vw;
+      &:not(:first-child) {
+        margin-top: 0;
+      }
+      .gauge__text{
+        font-size: 1.2em;
+      }
+    }
+  }
+}
+</style>

@@ -13,3 +13,10 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.home {
+  text-align: center;
+  margin: 0 auto;
+  display: inline;
+}
+</style>

@@ -1,7 +1,13 @@
 <template>
   <div id="app">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap-grid.min.css"
+    />
     <Header />
-    <router-view />
+    <div class="container">
+      <router-view />
+    </div>
   </div>
 </template>
 <script>
@@ -31,5 +37,9 @@ export default {
       color: #42b983;
     }
   }
+}
+
+.container {
+  padding-top: 7vh;
 }
 </style>
