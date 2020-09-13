@@ -27,7 +27,7 @@ export default {
         {
           href: "/configuracoes",
           title: "Configurações",
-          icon: "fa  fa-cog"
+          icon: "fa fa-cog"
         },
         {
           href: "/iluminacao",
