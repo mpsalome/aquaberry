@@ -5,15 +5,19 @@
 </template>
 
 <script>
+/* eslint-disable */
 import API from "@/services/api";
 
-/* eslint-disable */
 export default {
   name: "Chart",
   props: {},
   mounted: function() {
     console.log("teste");
-    console.log(API.getTemperatura());
+    try {
+      // console.log(API.getTemperatura());
+    } catch (error) {
+      // console.log(error)      
+    }
   }
 };
 </script>
