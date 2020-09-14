@@ -15,7 +15,7 @@
           ]"
           :scale-interval="5"
         />
-        <p class="gauge__text">Temperatura: {{ temperatura }}</p>
+        <p class="gauge__text">Temperatura: {{ temperatura }}ºC</p>
       </div>
       <div class="gauge__box col-12 col-lg-7">
         <VueSvgGauge
