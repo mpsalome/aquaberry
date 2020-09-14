@@ -52,11 +52,28 @@ export default {
   },
   created: function() {
     console.log("Conectando ao websocket");
-    var ws = new WebSocket("ws://192.168.15.48:3011/temperatura");
-    var self = this
-    ws.onmessage = function(event) {
-      self.temperatura = Number(event.data);
-    };
+      var wsTemp = new WebSocket("ws://192.168.15.48:3011/temperatura");
+      wsTemp.onmessage = event => {
+        this.temperatura = Number(event.data);
+      };
+      wsTemp.onerror= event => {
+        this.showDialog("Erro!", "Desculpe, um erro ocorreu. \nPor favor tente novamente em alguns segundos", "is-danger", "times-circle", "alertdialog" )
+        console.log(event)
+    }
+  },
+  methods: {
+    showDialog(title, message, type, icon, ariaRole) {
+      this.$buefy.dialog.alert({
+        title,
+        message,
+        type,
+        hasIcon: true,
+        icon,
+        iconPack: "fa",
+        ariaRole,
+        ariaModal: true
+      });
+    }
   }
 };
 </script>
