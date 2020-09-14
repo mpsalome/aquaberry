@@ -4,6 +4,7 @@ import App from './App.vue';
 import router from './router';
 
 import Buefy from "buefy";
+import 'buefy/dist/buefy.css'
 import VueSidebarMenu from "vue-sidebar-menu";
 import "vue-sidebar-menu/dist/vue-sidebar-menu.css";
 import VueSvgGauge from 'vue-svg-gauge'
