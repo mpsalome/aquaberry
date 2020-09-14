@@ -4,6 +4,14 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap-grid.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css"
+    />
     <Header />
     <div class="container">
       <router-view />

@@ -1,11 +1,5 @@
 <template>
   <header>
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
-      integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
-      crossorigin="anonymous"
-    />
     <sidebar-menu :menu="menu" :collapsed="true" style="z-index: 2;" />
     <img src="../assets/rasp_logo.png" alt="Logo Raspberry Pi" class="logo" />
   </header>
