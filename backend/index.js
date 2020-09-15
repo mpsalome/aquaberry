@@ -1,6 +1,6 @@
 import express from "express"
 import winston from "winston"
-import tempRouter from "./routes/temperatura.js"
+import router from "./routes/router.js"
 import cors from "cors"
 
 
@@ -27,7 +27,7 @@ global.logger = winston.createLogger({
 const app = express()
 app.use(express.json())
 app.use(cors())
-app.use("/temperatura", tempRouter)
+app.use("/", router)
 
 app.listen(3010, async () => {
     try {

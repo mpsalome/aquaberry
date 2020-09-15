@@ -52,7 +52,7 @@ export default {
   },
   created: function() {
     console.log("Conectando ao websocket");
-      var wsTemp = new WebSocket("ws://192.168.15.15:3011/temperatura");
+      var wsTemp = new WebSocket("ws://192.168.15.15:3011/");
       wsTemp.onmessage = event => {
         this.temperatura = Number(event.data);
       };
