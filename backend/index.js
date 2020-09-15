@@ -1,6 +1,7 @@
 import express from "express"
 import winston from "winston"
 import tempRouter from "./routes/temperatura.js"
+import phRouter from "./routes/ph.js"
 import cors from "cors"
 
 
@@ -28,6 +29,8 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 app.use("/temperatura", tempRouter)
+app.use("/ph", phRouter)
+
 
 app.listen(3010, async () => {
     try {
