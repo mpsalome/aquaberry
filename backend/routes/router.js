@@ -73,7 +73,7 @@ const handleTemperatura = temp => {
             relays[0].writeSync(0)
             logger.info("Ligando Cooler")
         } 
-    } else if (Number(temp) < 24 && Number(temp) < 24) {
+    } else if (Number(temp) < 24 && Number(temp) > 17) {
         if (relays[0].readSync() == 0 || relays[1].readSync() == 0 ) {
             logger.info("Temperatura ideal atingida. Desligando aquecedor e/ou Cooler")
             relays[0].writeSync(1)
