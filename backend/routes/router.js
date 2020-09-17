@@ -12,22 +12,20 @@ const sensor = ds18x20
 const router = express.Router()
 
 const relays = [
-    new gpio(15, 'out'), // rele 1
-    new gpio(14, 'out'), // rele 2
-    new gpio(18, 'out')  // rele 3
+    new gpio(18, 'out'), // rele 1
+    new gpio(23, 'out'), // rele 2
+    new gpio(24, 'out')  // rele 3
   ]
 
 
 
 // Carregando o sensor de temperatura 
-try {
-    sensor.loadDriver()
-    console.log('Driver carregado com sucesso!')
-    logger.info(`Driver carregado com sucesso!`)
-} catch (err) {
-    console.log('Erro ao carregar o driver:', err)
-    logger.info(`Erro ao carregar o driver: ${err}`)
-}
+// try {
+//     sensor.loadDriver()
+//     console.log('Driver carregado com sucesso!')
+// } catch (err) {
+//     console.log('Erro ao carregar o driver:', err)
+// }
 
 // Rotas
 router.get("/temperatura", async (req, res, next) => {
@@ -60,7 +58,7 @@ wss.on("connection", ws => {
 // Função pra desligart todos os rele 
 const allRelaysOff = () => {
     relays.forEach((relay, index) => {
-        console.log(`Status do rele ${index+1}`)
+        console.log(`Status do rele ${index+1}: ${relay.readSync()}`)
         console.log(`Desligando o rele ${index+1}`)
         relay.writeSync(1)
     })
