@@ -7,7 +7,11 @@ function get(theUrl) {
 
 export default {
   getTemperatura() {
-    var json = JSON.parse(get("http://192.168.15.48:3010/temperatura"));
-    return json;
+    var value = get("http://192.168.15.48:3010/temperatura");
+    return value;
+  },
+  getPh() {
+    var value = get("http://192.168.15.48:3010/ph");
+    return value;
   }
 };

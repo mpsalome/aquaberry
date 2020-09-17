@@ -47,19 +47,23 @@ export default {
   data: function() {
     return {
       temperatura: 0,
-      ph: 8
+      ph: 5
     };
   },
   created: function() {
     console.log("Conectando ao websocket");
       var wsTemp = new WebSocket("ws://192.168.15.15:3011/");
       wsTemp.onmessage = event => {
-        this.temperatura = Number(event.data);
+        let data = JSON.parse(event.data)
+        if (data.tipo==="temperatura") {
+          this.temperatura = Number(data.valor);
+        }
       };
       wsTemp.onerror= event => {
         this.showDialog("Erro!", "Desculpe, um erro ocorreu. \nPor favor tente novamente em alguns segundos", "is-danger", "times-circle", "alertdialog" )
         console.log(event)
-    }
+      }
+      // console.log("puxando ph", API.getPh())
   },
   methods: {
     showDialog(title, message, type, icon, ariaRole) {
