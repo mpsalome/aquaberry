@@ -88,7 +88,7 @@ const handleTemperatura = () => {
     }
   } else {
     if (relays[1].readSync() == 1) {
-      relays[0].writeSync(0)
+      relays[1].writeSync(0)
       logger.info('Ligando aquecedor')
     }
   }
