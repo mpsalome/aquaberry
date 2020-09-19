@@ -57,6 +57,17 @@ router.get('/ph', async (req, res, next) => {
   }
 })
 
+router.get('/statusReles', async (req, res, next) => {
+  try {
+    let status = statusReles()
+    res.send(status)
+    logger.info(`GET /statusReles: ${status}`)
+  } catch (err) {
+    logger.info(`Erro ao ler status dos reles: ${err}`)
+    next(err)
+  }
+})
+
 router.post('/releOff', async (req, res, next) => {
   try {
     let rele = enumRelays[req.body.nome.toUpperCase()]
@@ -147,6 +158,21 @@ const handleTemperatura = () => {
       logger.info('Ligando aquecedor')
     }
   }
+}
+
+//Status dos reles
+const statusReles = () => {
+  let status = {
+    0: 'ligado',
+    1: 'desligado'
+  }
+  let reles = {
+    aquecedor: status[relays[enumRelays.AQUECEDOR].readSync()],
+    filtroagua: status[relays[enumRelays.AGUA].readSync()],
+    cooler: status[relays[enumRelays.COOLER].readSync()],
+    led: status[relays[enumRelays.LED].readSync()]
+  }
+  return reles;
 }
 
 //Ler temperatura do sensor
