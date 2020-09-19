@@ -1,7 +1,7 @@
 <template>
   <div class="chart">
-    <div class="row">
-      <div class="gauge__box col-12 col-lg-7">
+    <div class="row justify-content-center">
+      <div class="gauge__box col-10 col-md-6">
         <VueSvgGauge
           :start-angle="-110"
           :end-angle="110"
@@ -17,7 +17,7 @@
         />
         <p class="gauge__text">Temperatura: {{ temperatura }}ºC</p>
       </div>
-      <div class="gauge__box col-12 col-lg-7">
+      <div class="gauge__box col-10 col-md-6 d-none">
         <VueSvgGauge
           :start-angle="-110"
           :end-angle="110"
@@ -84,11 +84,8 @@ export default {
 
 <style scoped lang="scss">
 .chart {
-  display: inline-block;
   margin: 0 auto;
   .gauge__box {
-    max-width: 80%;
-    margin-left: 15vw;
     &:not(:first-child) {
       margin-top: 40px;
     }
@@ -102,7 +99,6 @@ export default {
 @media only screen and (min-width: 768px) {
   .chart {
     .gauge__box {
-      margin-left: 15vw;
       &:not(:first-child) {
         margin-top: 0;
       }
