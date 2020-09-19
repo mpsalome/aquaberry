@@ -22,11 +22,6 @@ export default {
           href: "/configuracoes",
           title: "Configurações",
           icon: "fa fa-cog"
-        },
-        {
-          href: "/iluminacao",
-          title: "Iluminação",
-          icon: "fa fa-lightbulb"
         }
       ]
     };
