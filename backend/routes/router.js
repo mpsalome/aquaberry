@@ -17,16 +17,16 @@ const router = express.Router()
 
 const relays = [
   new gpio(18, 'out'), // rele 1: aquecedor 
-  new gpio(23, 'out'), // rele 2: filtro de água
-  new gpio(24, 'out'), // rele 3: fita de led
+  new gpio(24, 'out'), // rele 2: filtro de água
+  new gpio(23, 'out'), // rele 3: fita de led
   new gpio(21, 'out'), // rele 4: cooler
 ]
 
 const enumRelays = {
   AQUECEDOR: 0,
   AGUA: 1,
-  COOLER: 2,
-  LED: 3,
+  LED: 2,
+  COOLER: 3
 }
 
 
@@ -144,7 +144,7 @@ const handleTemperatura = () => {
       ligarRele(enumRelays.COOLER)
       logger.info('Ligando Cooler')
     }
-  } else if (Number(temp) < 24 && Number(temp) > 17) {
+  } else if (Number(temp) <= 24 && Number(temp) >= 17) {
     if (relays[enumRelays.COOLER].readSync() == 0 || relays[enumRelays.AQUECEDOR].readSync() == 0) {
       logger.info(
         'Temperatura ideal atingida. Desligando aquecedor e/ou Cooler'
