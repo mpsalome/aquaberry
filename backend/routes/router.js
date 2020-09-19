@@ -96,7 +96,11 @@ router.post('/releOn', async (req, res, next) => {
 
 // Websocket
 wss.on('connection', (ws) => {
-  var timerTemp = setInterval(lerTemperatura, 1000, ws)
+  
+  ws.send(JSON.stringify({ tipo: 'temperatura', valor: sensor.get('28-3c01b5567b40') }))
+
+  var timerTemp = setInterval(lerTemperatura, 5000, ws)
+  
   ws.on('message', (message) => {
     console.log(message)
   })
