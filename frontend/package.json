@@ -9,6 +9,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "buefy": "^0.9.3",
     "core-js": "^3.6.5",
     "express": "^4.17.1",
