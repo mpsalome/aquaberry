@@ -226,6 +226,6 @@ desligarRele(enumRelays.LED)
 desligarRele(enumRelays.COOLER)
 
 // Verificar temperatura a cada 1 segundo e aquecer ou arrefecer caso seja necessário
-// setInterval(handleTemperatura, 1000)
+setInterval(handleTemperatura, 1000)
 
 export default router
