@@ -47,8 +47,8 @@ export default {
   }
 }
 
-.container {
+div.container {
   padding-top: 7vh;
-  margin-left: 55px;
+  padding-left: 55px;
 }
 </style>
