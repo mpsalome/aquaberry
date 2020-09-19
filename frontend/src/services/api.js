@@ -37,5 +37,25 @@ export default {
       .catch(error => {
         return error;
       });
+  },
+  postTempManualOn() {
+    return axios
+      .post(`${IP}/tempManualOn`)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
+  },
+  postTempManualOff() {
+    return axios
+      .post(`${IP}/tempManualOff`)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
   }
 };

@@ -1,5 +1,14 @@
 <template>
   <div class="box__status row">
+    <div class="col-12">
+      Modo manual temperatura
+      <b-switch
+        name="modoManual"
+        @change.native="manualToggle"
+        type="is-success"
+        v-model="status.manual.temperatura"
+      ></b-switch>
+    </div>
     <div class="col-12 col-md-6">
       <b-field>
         Cooler
@@ -8,6 +17,19 @@
           @change.native="inputToggle"
           type="is-success"
           v-model="status.cooler"
+          :disabled="!status.manual.temperatura"
+        ></b-switch>
+      </b-field>
+    </div>
+    <div class="col-12 col-md-6">
+      <b-field>
+        Aquecedor
+        <b-switch
+          name="aquecedor"
+          @change.native="inputToggle"
+          type="is-success"
+          v-model="status.aquecedor"
+          :disabled="!status.manual.temperatura"
         ></b-switch>
       </b-field>
     </div>
@@ -30,17 +52,6 @@
           @change.native="inputToggle"
           type="is-success"
           v-model="status.led"
-        ></b-switch>
-      </b-field>
-    </div>
-    <div class="col-12 col-md-6">
-      <b-field>
-        Aquecedor
-        <b-switch
-          name="aquecedor"
-          @change.native="inputToggle"
-          type="is-success"
-          v-model="status.aquecedor"
         ></b-switch>
       </b-field>
     </div>
@@ -69,11 +80,17 @@ export default {
       });
     },
     inputToggle(event) {
-      if(event.target.checked){
-          API.postReleOn(event.target.name)
+      if (event.target.checked) {
+        API.postReleOn(event.target.name);
+      } else {
+        API.postReleOff(event.target.name);
       }
-      else{
-          API.postReleOff(event.target.name)
+    },
+    manualToggle(event) {
+      if (event.target.checked) {
+        API.postTempManualOn();
+      } else {
+        API.postTempManualOff();
       }
     }
   }
