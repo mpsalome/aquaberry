@@ -1,18 +1,48 @@
 <template>
   <div class="box__status row">
     <div class="col-12 col-md-6">
-      Cooler: <span v-if="cooler">ligado</span><span v-else>desligado</span>
+      <b-field>
+        Cooler
+        <b-switch
+          name="cooler"
+          @change.native="inputToggle"
+          type="is-success"
+          v-model="status.cooler"
+        ></b-switch>
+      </b-field>
     </div>
     <div class="col-12 col-md-6">
-      Filtro de Água: <span v-if="filtro">ligado</span
-      ><span v-else>desligado</span>
+      <b-field>
+        Filtro de Água
+        <b-switch
+          name="agua"
+          @change.native="inputToggle"
+          type="is-success"
+          v-model="status.filtro"
+        ></b-switch>
+      </b-field>
     </div>
     <div class="col-12 col-md-6">
-      LEDs: <span v-if="led">ligado</span><span v-else>desligado</span>
+      <b-field>
+        LEDs
+        <b-switch
+          name="led"
+          @change.native="inputToggle"
+          type="is-success"
+          v-model="status.led"
+        ></b-switch>
+      </b-field>
     </div>
     <div class="col-12 col-md-6">
-      Aquecedor: <span v-if="aquecedor">ligado</span
-      ><span v-else>desligado</span>
+      <b-field>
+        Aquecedor
+        <b-switch
+          name="aquecedor"
+          @change.native="inputToggle"
+          type="is-success"
+          v-model="status.aquecedor"
+        ></b-switch>
+      </b-field>
     </div>
   </div>
 </template>
@@ -22,25 +52,36 @@
 import API from "@/services/api";
 
 export default {
-  name: "Chart",
-  props: {},
+  name: "Status",
   data: function() {
     return {
-      cooler: true,
-      filtro: true,
-      led: true,
-      aquecedor: true
+      status: {}
     };
   },
   created: function() {
+    this.setStatus();
   },
   methods: {
+    setStatus() {
+      API.getStatusReles().then(value => {
+        this.status = value;
+        console.log(value);
+      });
+    },
+    inputToggle(event) {
+      if(event.target.checked){
+          API.postReleOn(event.target.name)
+      }
+      else{
+          API.postReleOff(event.target.name)
+      }
+    }
   }
 };
 </script>
 
 <style scoped lang="scss">
 .box__status {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 </style>

@@ -1,48 +1,41 @@
-const axios = require("axios");
-
-function get(theUrl) {
-  axios
-    .get(theUrl)
-    .then(function(response) {
-      return response;
-    })
-    .catch(function(error) {
-      return error;
-    });
-}
-
-function post(theUrl, body) {
-  axios
-    .post(theUrl, body)
-    .then(function(response) {
-      return response;
-    })
-    .catch(function(error) {
-      return error;
-    });
-}
+import axios from "axios";
 
 const IP = "http://192.168.15.15:3010";
 
 export default {
   getTemperatura() {
-    var value = get(`${IP}/temperatura`);
-    return value;
+    return axios.get(`${IP}/temperatura`).then(response => {
+      return response.data;
+    });
   },
   getPh() {
-    var value = get(`${IP}/ph`);
-    return value;
+    return axios.get(`${IP}/ph`).then(response => {
+      return response.data;
+    });
   },
   getStatusReles() {
-    var value = get(`${IP}/statusReles`);
-    return value;
+    return axios.get(`${IP}/statusReles`).then(response => {
+      return response.data;
+    });
   },
-  postReleOff() {
-    var value = post(`${IP}/releOff`);
-    return value;
+  postReleOff(rele) {
+    return axios
+      .post(`${IP}/releOff`, { nome: rele })
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
   },
-  postReleOn() {
-    var value = post(`${IP}/releOn`);
-    return value;
+  postReleOn(rele) {
+    return axios
+      .post(`${IP}/releOn`, { nome: rele })
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
   }
 };

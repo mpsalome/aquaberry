@@ -163,8 +163,8 @@ const handleTemperatura = () => {
 //Status dos reles
 const statusReles = () => {
   let status = {
-    0: 'ligado',
-    1: 'desligado'
+    0: 'true',
+    1: 'false'
   }
   let reles = {
     aquecedor: status[relays[enumRelays.AQUECEDOR].readSync()],
