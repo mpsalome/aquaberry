@@ -50,7 +50,7 @@ router.get('/ph', async (req, res, next) => {
     lerPh()
     console.log(`Leitura de pH requisitada pela rota: ${phObj.ph}`)
     res.send(phObj.ph.toString())
-    logger.info(`GET /ph: ${phObj.ph.toString()}`)
+    logger.info(`GET /ph: ${JSON.stringify(phObj.ph.toString())}`)
   } catch (err) {
     logger.info(`Erro ao ler o ph: ${err}`)
     next(err)
@@ -61,7 +61,7 @@ router.get('/statusReles', async (req, res, next) => {
   try {
     let status = statusReles()
     res.send(status)
-    logger.info(`GET /statusReles: ${status}`)
+    logger.info(`GET /statusReles: ${JSON.stringify(status)}`)
   } catch (err) {
     logger.info(`Erro ao ler status dos reles: ${err}`)
     next(err)
@@ -73,7 +73,7 @@ router.post('/releOff', async (req, res, next) => {
     let rele = enumRelays[req.body.nome.toUpperCase()]
     desligarRele(rele)
     res.send('Rele desligado')
-    logger.info(`POST /releOff: ${req.body.nome.toUpperCase()}`)
+    logger.info(`POST /releOff: ${JSON.stringify(req.body.nome.toUpperCase())}`)
   } catch (err) {
     logger.info(`Erro ao desligar o relé: ${err}`)
     next(err)
@@ -85,7 +85,7 @@ router.post('/releOn', async (req, res, next) => {
     let rele = enumRelays[req.body.nome.toUpperCase()]
     ligarRele(rele)
     res.send('Rele ligado')
-    logger.info(`POST /releOn: ${req.body.nome.toUpperCase()}`)
+    logger.info(`POST /releOn: ${JSON.stringify(req.body.nome.toUpperCase())}`)
   } catch (err) {
     logger.info(`Erro ao ligar o relé: ${err}`)
     next(err)
