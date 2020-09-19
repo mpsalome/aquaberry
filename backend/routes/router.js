@@ -16,10 +16,19 @@ const sensor = ds18x20
 const router = express.Router()
 
 const relays = [
-  new gpio(18, 'out'), // rele 1
-  new gpio(23, 'out'), // rele 2
-  new gpio(24, 'out'), // rele 3
+  new gpio(18, 'out'), // rele 1: aquecedor 
+  new gpio(23, 'out'), // rele 2: filtro de água
+  new gpio(24, 'out'), // rele 3: fita de led
+  new gpio(21, 'out'), // rele 4: cooler
 ]
+
+const enumRelays = {
+  AQUECEDOR: 0,
+  AGUA: 1,
+  COOLER: 2,
+  LED: 3,
+}
+
 
 var phObj = { ph: 0 }
 
@@ -48,6 +57,32 @@ router.get('/ph', async (req, res, next) => {
   }
 })
 
+router.post('/releOff', async (req, res, next) => {
+  try {
+    let rele = enumRelays[req.body.nome.toUpperCase()]
+    desligarRele(rele)
+    res.send('Rele desligado')
+    logger.info(`POST /releOff: ${req.body.nome.toUpperCase()}`)
+  } catch (err) {
+    logger.info(`Erro ao desligar o relé: ${err}`)
+    next(err)
+  }
+})
+
+router.post('/releOn', async (req, res, next) => {
+  try {
+    let rele = enumRelays[req.body.nome.toUpperCase()]
+    ligarRele(rele)
+    res.send('Rele ligado')
+    logger.info(`POST /releOn: ${req.body.nome.toUpperCase()}`)
+  } catch (err) {
+    logger.info(`Erro ao ligar o relé: ${err}`)
+    next(err)
+  }
+})
+
+
+
 // Websocket
 wss.on('connection', (ws) => {
   var timerTemp = setInterval(lerTemperatura, 1000, ws)
@@ -62,33 +97,53 @@ wss.on('connection', (ws) => {
 
 // Funções
 
-// Função pra desligart todos os rele
+// 0 Liga e 1 desliga
+
+// Função pra ligar todos os rele
+const allRelaysOn = () => {
+  console.log('Ligando todos os relés')
+  relays.forEach((relay) => {
+    relay.writeSync(0)
+  })
+}
+
+// Função pra desligar todos os rele
 const allRelaysOff = () => {
-  console.log('Desligando relés')
-  relays.forEach((relay, index) => {
+  console.log('Desligando todos os relés')
+  relays.forEach((relay) => {
     relay.writeSync(1)
   })
+}
+
+// Desligar relé especifico
+const desligarRele = rele => {
+  relays[rele].writeSync(1)
+}
+
+// Ligar relé especifico
+const ligarRele = rele => {
+  relays[rele].writeSync(0)
 }
 
 // Ligar Relé baseado na temperatura
 const handleTemperatura = () => {
   let temp = sensor.get('28-3c01b5567b40')
   if (Number(temp) > 24) {
-    if (relays[0].readSync() == 1) {
-      relays[0].writeSync(0)
+    if (relays[enumRelays.COOLER].readSync() == 1) {
+      ligarRele(enumRelays.COOLER)
       logger.info('Ligando Cooler')
     }
   } else if (Number(temp) < 24 && Number(temp) > 17) {
-    if (relays[0].readSync() == 0 || relays[1].readSync() == 0) {
+    if (relays[enumRelays.COOLER].readSync() == 0 || relays[enumRelays.AQUECEDOR].readSync() == 0) {
       logger.info(
         'Temperatura ideal atingida. Desligando aquecedor e/ou Cooler'
       )
-      relays[0].writeSync(1)
-      relays[1].writeSync(1)
+      relays[enumRelays.COOLER].writeSync(1)
+      relays[enumRelays.AQUECEDOR].writeSync(1)
     }
   } else {
-    if (relays[1].readSync() == 1) {
-      relays[1].writeSync(0)
+    if (relays[enumRelays.AQUECEDOR].readSync() == 1) {
+      ligarRele(enumRelays.AQUECEDOR)
       logger.info('Ligando aquecedor')
     }
   }
@@ -135,10 +190,16 @@ const lerPh = () => {
 
 }
 
-// Desligando todos os reles no start up.
-allRelaysOff()
+// Ligando todos os reles no start up.
+allRelaysOn()
+
+// Desligando todos os reles 1 por 1
+desligarRele(enumRelays.AGUA)
+desligarRele(enumRelays.AQUECEDOR)
+desligarRele(enumRelays.LED)
+desligarRele(enumRelays.COOLER)
 
 // Verificar temperatura a cada 1 segundo e aquecer ou arrefecer caso seja necessário
-setInterval(handleTemperatura, 1000)
+// setInterval(handleTemperatura, 1000)
 
 export default router
