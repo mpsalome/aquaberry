@@ -40,6 +40,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-left: 55px;
 }
 .logo {
   max-height: 80%;
