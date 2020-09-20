@@ -123,14 +123,9 @@ router.post('/tempManualOn', async (req, res, next) => {
 
 // Websocket
 wss.on('connection', (ws) => {
-  ws.send(
-    JSON.stringify({
-      tipo: 'temperatura',
-      valor: sensor.get('28-3c01b5567b40'),
-    })
-  )
+  enviarInfo(ws)
 
-  var timerTemp = setInterval(lerTemperatura, 5000, ws)
+  var timerTemp = setInterval(enviarInfo, 5000, ws)
 
   ws.on('message', (message) => {
     console.log(message)
@@ -226,9 +221,23 @@ const statusReles = () => {
 }
 
 //Ler temperatura do sensor
-const lerTemperatura = (socket) => {
-  let temp = sensor.get('28-3c01b5567b40')
-  socket.send(JSON.stringify({ tipo: 'temperatura', valor: temp }))
+const enviarInfo = (socket) => {
+  let status = {
+    0: 'true',
+    1: 'false',
+  }
+  let info = {
+    aquecedor: status[relays[enumRelays.AQUECEDOR].readSync()],
+    filtroagua: status[relays[enumRelays.AGUA].readSync()],
+    cooler: status[relays[enumRelays.COOLER].readSync()],
+    led: status[relays[enumRelays.LED].readSync()],
+    manual: {
+      temperatura: modoManual.temperatura,
+      iluminacao: modoManual.iluminacao,
+    },
+    temperatura: sensor.get('28-3c01b5567b40')
+  }
+  socket.send(JSON.stringify(info))
 }
 
 //ler ph do sensor

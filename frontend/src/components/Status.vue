@@ -66,11 +66,36 @@ export default {
   name: "Status",
   data: function() {
     return {
-      status: {}
+      status: {
+        aquecedor: false,
+        filtroagua: false,
+        cooler: false,
+        led: false,
+        manual: {
+          temperatura: false,
+          iluminacao: false
+        }
+      }
     };
   },
   created: function() {
-    this.setStatus();
+    this.setStatus()
+    var wsStatus = new WebSocket("ws://192.168.15.15:3011/");
+    wsStatus.onmessage = event => {
+      let data = JSON.parse(event.data)
+      console.log(data)
+      this.status = data;
+    };
+    wsStatus.onerror = event => {
+      this.showDialog(
+        "Erro!",
+        "Desculpe, um erro ocorreu. \nPor favor tente novamente em alguns segundos",
+        "is-danger",
+        "times-circle",
+        "alertdialog"
+      );
+      console.log(event);
+    };
   },
   methods: {
     setStatus() {
@@ -92,6 +117,18 @@ export default {
       } else {
         API.postTempManualOff();
       }
+    },
+    showDialog(title, message, type, icon, ariaRole) {
+      this.$buefy.dialog.alert({
+        title,
+        message,
+        type,
+        hasIcon: true,
+        icon,
+        iconPack: "fa",
+        ariaRole,
+        ariaModal: true
+      });
     }
   }
 };
