@@ -58,7 +58,6 @@ export default {
       };
       wsTemp.onerror= event => {
         this.showDialog("Erro!", "Desculpe, um erro ocorreu. \nPor favor tente novamente em alguns segundos", "is-danger", "times-circle", "alertdialog" )
-        console.log(event)
       }
   },
   methods: {
