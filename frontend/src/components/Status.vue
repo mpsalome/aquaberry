@@ -102,30 +102,40 @@ export default {
       });
     },
     inputToggle(event) {
-      event.target.disabled = true
+      event.target.disabled = true;
       if (event.target.checked) {
         API.postReleOn(event.target.name).then(() => {
-          this.$buefy.toast.open({message: `${event.target.name.toUpperCase()} ligado`});
-          event.target.disabled = false
+          this.$buefy.toast.open({
+            message: `${event.target.name.toUpperCase()} ligado`
+          });
+          event.target.disabled = false;
         });
       } else {
         API.postReleOff(event.target.name).then(() => {
-          this.$buefy.toast.open({message: `${event.target.name.toUpperCase()} desligado`});
-          event.target.disabled = false
+          this.$buefy.toast.open({
+            message: `${event.target.name.toUpperCase()} desligado`
+          });
+          event.target.disabled = false;
         });
       }
     },
     manualToggle(event) {
-      event.target.disabled = true
+      event.target.disabled = true;
       if (event.target.checked) {
         API.postTempManualOn().then(() => {
-          this.$buefy.toast.open({message: `Controle manual de temperatura ligado`});
-          event.target.disabled = false
+          this.$buefy.toast.open({
+            message: `Controle manual de temperatura ligado`
+          });
+          event.target.disabled = false;
+          event.target.checked = true
         });
       } else {
         API.postTempManualOff().then(() => {
-          this.$buefy.toast.open({message: `Controle manual de temperatura desligado`});
-          event.target.disabled = false
+          this.$buefy.toast.open({
+            message: `Controle manual de temperatura desligado`
+          });
+          event.target.disabled = false;
+          event.target.checked = false
         });
       }
     },
@@ -142,19 +152,28 @@ export default {
       });
     },
     showConfirmDialog(event) {
-      this.$buefy.dialog.confirm({
-        title: "Atenção!",
-        message: "Ao ligar o controle manual de temperatura o AquaBerry não cuidará mais da temperatura de seu aquário. \nDeseja continuar?",
-        confirmText: "Confirmar",
-        cancelText: "Cancelar",
-        type: "is-warning",
-        iconPack: "fa",
-        icon: "exclamation-triangle",
-        hasIcon: true,
-        ariaRole: "alertdialog",
-        onConfirm: () => {this.manualToggle(event)},
-        onCancel: () => {event.target.checked = false}
-      });
+      if (!event.target.checked) {
+        this.manualToggle(event);
+      } else {
+        this.$buefy.dialog.confirm({
+          title: "Atenção!",
+          message:
+            "Ao ligar o controle manual de temperatura o AquaBerry não cuidará mais da temperatura de seu aquário. \nDeseja continuar?",
+          confirmText: "Confirmar",
+          cancelText: "Cancelar",
+          type: "is-warning",
+          iconPack: "fa",
+          icon: "exclamation-triangle",
+          hasIcon: true,
+          ariaRole: "alertdialog",
+          onConfirm: () => {
+            this.manualToggle(event);
+          },
+          onCancel: () => {
+            event.target.checked = false;
+          }
+        });
+      }
     }
   }
 };
