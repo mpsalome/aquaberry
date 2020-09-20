@@ -1,10 +1,10 @@
 <template>
   <div class="box__status row">
     <div class="col-12">
-      Modo manual temperatura
+      Controle manual de temperatura
       <b-switch
         name="modoManual"
-        @change.native="manualToggle"
+        @change.native="showConfirmDialog"
         type="is-success"
         v-model="status.manual.temperatura"
       ></b-switch>
@@ -40,7 +40,7 @@
           name="agua"
           @change.native="inputToggle"
           type="is-success"
-          v-model="status.filtro"
+          v-model="status.filtroagua"
         ></b-switch>
       </b-field>
     </div>
@@ -79,11 +79,10 @@ export default {
     };
   },
   created: function() {
-    this.setStatus()
+    this.setStatus();
     var wsStatus = new WebSocket("ws://192.168.15.15:3011/");
     wsStatus.onmessage = event => {
-      let data = JSON.parse(event.data)
-      console.log(data)
+      let data = JSON.parse(event.data);
       this.status = data;
     };
     wsStatus.onerror = event => {
@@ -94,28 +93,40 @@ export default {
         "times-circle",
         "alertdialog"
       );
-      console.log(event);
     };
   },
   methods: {
     setStatus() {
       API.getStatusReles().then(value => {
         this.status = value;
-        console.log(value);
       });
     },
     inputToggle(event) {
+      event.target.disabled = true
       if (event.target.checked) {
-        API.postReleOn(event.target.name);
+        API.postReleOn(event.target.name).then(() => {
+          this.$buefy.toast.open({message: `${event.target.name.toUpperCase()} ligado`});
+          event.target.disabled = false
+        });
       } else {
-        API.postReleOff(event.target.name);
+        API.postReleOff(event.target.name).then(() => {
+          this.$buefy.toast.open({message: `${event.target.name.toUpperCase()} desligado`});
+          event.target.disabled = false
+        });
       }
     },
     manualToggle(event) {
+      event.target.disabled = true
       if (event.target.checked) {
-        API.postTempManualOn();
+        API.postTempManualOn().then(() => {
+          this.$buefy.toast.open({message: `Controle manual de temperatura ligado`});
+          event.target.disabled = false
+        });
       } else {
-        API.postTempManualOff();
+        API.postTempManualOff().then(() => {
+          this.$buefy.toast.open({message: `Controle manual de temperatura desligado`});
+          event.target.disabled = false
+        });
       }
     },
     showDialog(title, message, type, icon, ariaRole) {
@@ -128,6 +139,21 @@ export default {
         iconPack: "fa",
         ariaRole,
         ariaModal: true
+      });
+    },
+    showConfirmDialog(event) {
+      this.$buefy.dialog.confirm({
+        title: "Atenção!",
+        message: "Ao ligar o controle manual de temperatura o AquaBerry não cuidará mais da temperatura de seu aquário. \nDeseja continuar?",
+        confirmText: "Confirmar",
+        cancelText: "Cancelar",
+        type: "is-warning",
+        iconPack: "fa",
+        icon: "exclamation-triangle",
+        hasIcon: true,
+        ariaRole: "alertdialog",
+        onConfirm: () => {this.manualToggle(event)},
+        onCancel: () => {event.target.checked = false}
       });
     }
   }
