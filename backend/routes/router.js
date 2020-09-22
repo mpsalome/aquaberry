@@ -276,8 +276,7 @@ const lerPh = () => {
 // Ligando todos os reles no start up.
 allRelaysOn()
 
-// Desligando todos os reles 1 por 1
-desligarRele(enumRelays.AGUA)
+// Desligando reles que deverão ser ligados programaticamente
 desligarRele(enumRelays.AQUECEDOR)
 desligarRele(enumRelays.LED)
 desligarRele(enumRelays.COOLER)
