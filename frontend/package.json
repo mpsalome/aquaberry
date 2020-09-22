@@ -9,6 +9,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0",
     "axios": "^0.20.0",
     "buefy": "^0.9.3",
     "core-js": "^3.6.5",
