@@ -207,7 +207,12 @@ const statusReles = () => {
     0: 'true',
     1: 'false',
   }
+  let date = new Date()
+  let hour = date.getHours()
+  let minute = date.getMinutes().length === 1 ? `0${date.getMinutes()}` : date.getMinutes()
+  let dateString = `${hour}:${minute}`
   let reles = {
+    hora: dateString,
     aquecedor: status[relays[enumRelays.AQUECEDOR].readSync()],
     filtroagua: status[relays[enumRelays.AGUA].readSync()],
     cooler: status[relays[enumRelays.COOLER].readSync()],
@@ -220,13 +225,18 @@ const statusReles = () => {
   return reles
 }
 
-//Ler temperatura do sensor
+//Ler infos do servidor
 const enviarInfo = (socket) => {
   let status = {
     0: 'true',
     1: 'false',
   }
+  let date = new Date()
+  let hour = date.getHours()
+  let minute = date.getMinutes().length === 1 ? `0${date.getMinutes()}` : date.getMinutes()
+  let dateString = `${hour}:${minute}`
   let info = {
+    hora: dateString,
     aquecedor: status[relays[enumRelays.AQUECEDOR].readSync()],
     filtroagua: status[relays[enumRelays.AGUA].readSync()],
     cooler: status[relays[enumRelays.COOLER].readSync()],

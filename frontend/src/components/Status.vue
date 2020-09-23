@@ -1,6 +1,9 @@
 <template>
   <div class="box__status row">
     <div class="col-12">
+      <p>Hora atual do sistema: {{ status.hora }}</p>
+    </div>
+    <div class="col-12">
       Controle manual de temperatura
       <b-switch
         name="modoManual"
@@ -74,7 +77,8 @@ export default {
         manual: {
           temperatura: false,
           iluminacao: false
-        }
+        },
+        hora: ""
       }
     };
   },
@@ -127,7 +131,7 @@ export default {
             message: `Controle manual de temperatura ligado`
           });
           event.target.disabled = false;
-          event.target.checked = true
+          event.target.checked = true;
         });
       } else {
         API.postTempManualOff().then(() => {
@@ -135,7 +139,7 @@ export default {
             message: `Controle manual de temperatura desligado`
           });
           event.target.disabled = false;
-          event.target.checked = false
+          event.target.checked = false;
         });
       }
     },
