@@ -35,7 +35,9 @@ var modoManual = { temperatura: false, iluminacao: false }
 
 var options = {
   MAX_TEMP: 24,
-  MIN_TEMP: 17
+  MIN_TEMP: 17,
+  ON_LUZ: 6,
+  OFF_LUZ: 18
 }
 // Rotas
 router.get('/temperatura', async (req, res, next) => {
@@ -283,6 +285,20 @@ const lerPh = () => {
   }
 }
 
+const handleIluminacao = () => {
+  let date = new Date()
+  let hour = date.getHours()
+
+  console.log(`Hora atual: ${hour}`)
+  if (hour >= options.ON_LUZ) {
+    ligarRele(enumRelays.LED)
+    console.log(`Ligando LED`)
+  } else {
+    desligarRele(enumRelays.LED)
+    console.log(`Desligando LED`)
+  }
+}
+
 // Ligando todos os reles no start up.
 allRelaysOn()
 
@@ -290,8 +306,12 @@ allRelaysOn()
 desligarRele(enumRelays.AQUECEDOR)
 desligarRele(enumRelays.LED)
 desligarRele(enumRelays.COOLER)
+handleIluminacao()
 
 // Verificar temperatura a cada 10 segundos e aquecer ou arrefecer caso seja necessário
 setInterval(handleTemperatura, 10000)
+
+// Verificar a cada meia hora o horário pra cuidar da iluminação do áquario 
+setInterval(handleIluminacao, 1800000) 
 
 export default router
