@@ -84,7 +84,7 @@ export default {
   },
   created: function() {
     this.setStatus();
-    var wsStatus = new WebSocket(`ws://${process.env.VUE_APP_IP}:3011/`);
+    var wsStatus = new WebSocket(`wss://${process.env.VUE_APP_IP}:3011/`);
     wsStatus.onmessage = event => {
       let data = JSON.parse(event.data);
       this.status = data;
