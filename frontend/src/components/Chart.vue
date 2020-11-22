@@ -51,7 +51,7 @@ export default {
     };
   },
   created: function() {
-      var wsTemp = new WebSocket("ws://192.168.15.15:3011/");
+      var wsTemp = new WebSocket(`ws://${process.env.VUE_APP_IP}:3011/`);
       wsTemp.onmessage = event => {
         let data = JSON.parse(event.data)
         this.temperatura = Number(data.temperatura);

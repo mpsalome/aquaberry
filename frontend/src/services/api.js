@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const IP = "http://192.168.15.15:3010";
+const IP = `${process.env.VUE_APP_IP}:3010`;
 
 export default {
   getTemperatura() {
