@@ -6,11 +6,10 @@ import ds18x20 from 'ds18x20'
 const wsserver = require('ws').Server
 const wss = new wsserver({ port: 3011 })
 const gpio = require('onoff').Gpio
-
+const sqlite3 = require('sqlite3').verbose()
 const Raspi = require('raspi')
 const I2C = require('raspi-i2c').I2C
 const ADS1x15 = require('raspi-kit-ads1x15')
-
 const sensor = ds18x20
 
 const router = express.Router()
@@ -72,6 +71,45 @@ router.get('/statusReles', async (req, res, next) => {
   } catch (err) {
     logger.info(`Erro ao ler status dos reles: ${err}`)
     next(err)
+  }
+})
+
+router.get('/configTimer/:idSensor', async (req, res, next) => {
+  try {
+    logger.info(`GET: /ConfigTimer`)
+    let db = new sqlite3.Database('/home/pi/aquaberry.db')
+    db.all(`SELECT acao, hora FROM ConfigTimer WHERE idsensor = '${req.params.idSensor}'`, [], (err, rows) => {
+      if(err) throw err
+      rows.forEach
+      res.send(JSON.stringify(rows));
+    })
+  } catch (error) {
+    logger.info(`Erro na rota /ConfigTimer: ${error.message}`)
+  }
+  finally {
+    db.close(() => {
+      logger.info('Conexão com o banco fechada.')
+    })
+  }
+})
+
+
+router.get('/configTemp', async (req, res, next) => {
+  try {
+    logger.info(`GET: /ConfigTemp`)
+    let db = new sqlite3.Database('/home/pi/aquaberry.db')
+    db.all(`SELECT tempmin, tempideal, tempmax, idsensor FROM ConfigTemp'`, [], (err, rows) => {
+      if(err) throw err
+      rows.forEach
+      res.send(JSON.stringify(rows));
+    })
+  } catch (error) {
+    logger.info(`Erro na rota /ConfigTemp: ${error.message}`)
+  }
+  finally {
+    db.close(() => {
+      logger.info('Conexão com o banco fechada.')
+    })
   }
 })
 
