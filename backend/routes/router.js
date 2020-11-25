@@ -33,10 +33,12 @@ var phObj = { ph: 0 }
 var modoManual = { temperatura: false, iluminacao: false }
 
 var options = {
-  MAX_TEMP: 24,
-  MIN_TEMP: 17,
-  ON_LUZ: 6,
-  OFF_LUZ: 18
+  MAX_TEMP: 0,
+  MIN_TEMP: 0,
+  IDEAL_TEMP: 0,
+  ON_LUZ: 0,
+  OFF_LUZ: 0,
+  ALIMENTACAO: []
 }
 // Rotas
 router.get('/temperatura', async (req, res, next) => {
@@ -80,7 +82,6 @@ router.get('/configTimer/:idSensor', async (req, res, next) => {
     let db = new sqlite3.Database('/home/pi/aquaberry.db')
     db.all(`SELECT acao, hora FROM ConfigTimer WHERE idsensor = '${req.params.idSensor}'`, [], (err, rows) => {
       if(err) throw err
-      rows.forEach
       res.send(JSON.stringify(rows));
     })
   } catch (error) {
@@ -100,7 +101,6 @@ router.get('/configTemp', async (req, res, next) => {
     let db = new sqlite3.Database('/home/pi/aquaberry.db')
     db.all(`SELECT tempmin, tempideal, tempmax, idsensor FROM ConfigTemp'`, [], (err, rows) => {
       if(err) throw err
-      rows.forEach
       res.send(JSON.stringify(rows));
     })
   } catch (error) {
@@ -325,7 +325,7 @@ const lerPh = () => {
 
 const handleIluminacao = () => {
   let date = new Date()
-  let hour = date.getHours()
+  let hour = date.getTime()
 
   console.log(`Hora atual: ${hour}`)
   if (hour >= options.ON_LUZ) {
@@ -337,8 +337,71 @@ const handleIluminacao = () => {
   }
 }
 
+// ids dos sensores/atuadores: 
+// Temperatura = 1
+// Bomba = 2
+// Aquecedor = 3
+// Cooler = 4
+// Led = 5
+// Alimentador = 6 
+// Modulo PH =  7
+
+// 0 Liga e 1 desliga
+
+// Função para setar as options
+const setOptions = () => {
+  try {
+    logger.info(`Trazendo infos do banco`)
+    let db = new sqlite3.Database('/home/pi/aquaberry.db')
+    db.all(`SELECT acao, hora, idsensor FROM ConfigTimer`, [], (err, rows) => {
+      logger.info(`Configurando timers`)
+      if(err) throw err
+      rows.forEach(el => {
+        if(el.idSensor === 5){
+          if (el.acao === 0) {
+            let date = new Date()
+            let horas = el.hora.split(':',1)
+            date.setHours(horas[0], horas[1], horas[2])
+            options.ON_LUZ = date.getTime()
+          } else {
+            let date = new Date()
+            let horas = el.hora.split(':',1)
+            date.setHours(horas[0], horas[1], horas[2])
+            options.OFF_LUZ = date.getTime()
+          }
+        }
+        else if (el.idSensor === 6) {
+          let date = new Date()
+          let horas = el.hora.split(':',1)
+          date.setHours(horas[0], horas[1], horas[2])
+          options.ALIMENTACAO.push(date)
+        }
+      });
+    })
+    db.all(`SELECT tempmin, tempideal, tempmax`, [], (err, rows) => {
+      logger.info(`Configurando temperatura`)
+      if(err) throw err
+      if (rows[0].idSensor === 1) {
+        options.MIN_TEMP = rows[0].tempmin
+        options.IDEAL_TEMP = rows[0].tempideal
+        options.MAX_TEMP = rows[0].tempmax
+      }
+    })
+  } catch (error) {
+    logger.info(`Erro no setOptions()`)
+  }
+  finally {
+    db.close(() => {
+      logger.info('Conexão com o banco fechada.')
+    })
+  }
+}
+
 // Ligando todos os reles no start up.
 allRelaysOn()
+
+// Definindo o options 
+setOptions()
 
 // Desligando reles que deverão ser ligados programaticamente
 desligarRele(enumRelays.AQUECEDOR)
