@@ -11,6 +11,7 @@ const Raspi = require('raspi')
 const I2C = require('raspi-i2c').I2C
 const ADS1x15 = require('raspi-kit-ads1x15')
 const sensor = ds18x20
+const { spawn } = require('child_process')
 
 const router = express.Router()
 
@@ -347,6 +348,13 @@ const handleIluminacao = () => {
   }
 }
 
+const handleAlimentacao = () => {
+  let python = spawn('python', ['../servo.py'])
+  python.stdout.on('data', function(data) { 
+    console.log(data.toString()); 
+  }) 
+}
+
 // ids dos sensores/atuadores: 
 // Temperatura = 1
 // Bomba = 2
@@ -430,5 +438,8 @@ setInterval(handleTemperatura, 10000)
 
 // Verificar a cada meia hora o horário pra cuidar da iluminação do áquario 
 setInterval(handleIluminacao, 1800000) 
+
+// Verificar a cada meia hora o horário pra cuidar da alimentação do peixe 
+setInterval(handleAlimentacao, 1800000) 
 
 export default router
