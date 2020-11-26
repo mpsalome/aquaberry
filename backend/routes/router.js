@@ -338,7 +338,7 @@ const handleIluminacao = () => {
   let hour = Date.parse(`01/01/2011 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`)
 
   console.log(`Hora atual: ${hour}`)
-  if (hour >= options.ON_LUZ) {
+  if (hour >= options.ON_LUZ && hour <= options.OFF_LUZ ) {
     ligarRele(enumRelays.LED)
     console.log(`Ligando LED`)
   } else {
@@ -407,6 +407,8 @@ const setOptions = () => {
   finally {
     db.close(() => {
       console.log('Conexão com o banco fechada.')
+      console.log('handleIluminacao')
+      handleIluminacao()
     })
   }
 }
@@ -421,7 +423,7 @@ setOptions()
 desligarRele(enumRelays.AQUECEDOR)
 desligarRele(enumRelays.LED)
 desligarRele(enumRelays.COOLER)
-handleIluminacao()
+
 
 // Verificar temperatura a cada 10 segundos e aquecer ou arrefecer caso seja necessário
 setInterval(handleTemperatura, 10000)
