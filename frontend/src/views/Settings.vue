@@ -41,6 +41,7 @@
         icon-pack="far"
         icon="clock"
         v-model="hora.value"
+        :disabled="hora.value !== '' ? true : false"
       ></b-input>
     </b-field>
     <b-button type="is-info" icon-left="plus" @click="addHora"
@@ -105,7 +106,7 @@ export default {
             }
           }
           else if (el.idsensor === 6) {
-            this.horaAlimentacao.push(el.hora)
+            this.horaAlimentacao.push({value: el.hora})
           }
         })
       });
