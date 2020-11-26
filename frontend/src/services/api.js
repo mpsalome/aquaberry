@@ -18,6 +18,16 @@ export default {
       return response.data;
     });
   },
+  getConfigTimer() {
+    return axios.get(`${IP}/configTimer`).then(response => {
+      return response.data;
+    });
+  },
+  getConfigTemp() {
+    return axios.get(`${IP}/configTemp`).then(response => {
+      return response.data;
+    });
+  },
   postReleOff(rele) {
     return axios
       .post(`${IP}/releOff`, { nome: rele })

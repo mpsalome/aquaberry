@@ -10,6 +10,7 @@
         icon-pack="fas"
         icon="thermometer-full"
         v-model="maxTemp"
+        :disabled="maxTemp !== '' ? true : false"
       ></b-input>
     </b-field>
     <b-field>
@@ -19,6 +20,7 @@
         icon-pack="fas"
         icon="thermometer-half"
         v-model="idealTemp"
+        :disabled="idealTemp !== '' ? true : false"
       ></b-input>
     </b-field>
     <b-field>
@@ -28,6 +30,7 @@
         icon-pack="fas"
         icon="thermometer-empty"
         v-model="minTemp"
+        :disabled="minTemp !== '' ? true : false"
       ></b-input>
     </b-field>
 
@@ -50,6 +53,7 @@
         icon-pack="far"
         icon="sun"
         v-model="iniLuz"
+        :disabled="iniLuz !== '' ? true : false"
       ></b-input>
     </b-field>
     <b-field>
@@ -58,6 +62,7 @@
         icon-pack="far"
         icon="moon"
         v-model="fimLuz"
+        :disabled="fimLuz !== '' ? true : false"
       ></b-input>
     </b-field>
     <div class="buttons">
@@ -67,6 +72,9 @@
 </template>
 
 <script>
+/* eslint-disable */
+import API from "@/services/api";
+
 export default {
   data() {
     return {
@@ -78,9 +86,39 @@ export default {
       fimLuz: ""
     };
   },
+  created: function() {
+    this.setConfigTimer();
+    this.setConfigTemp();
+  },
   methods: {
     addHora: function() {
       this.horaAlimentacao.push({ value: "" });
+    },
+    setConfigTimer() {
+      API.getConfigTimer().then(data => {
+        data.forEach( el =>{
+          if(el.idsensor === 5){
+            if (el.acao === 0) {
+              this.iniLuz = el.hora
+            } else {
+              this.fimLuz= el.hora
+            }
+          }
+          else if (el.idsensor === 6) {
+            this.horaAlimentacao.push(el.hora)
+          }
+        })
+      });
+    },
+    setConfigTemp() {
+      API.getConfigTemp().then(data => {
+        this.maxTemp = data[0].tempmax;
+        this.minTemp = data[0].tempmin;
+        this.idealTemp = data[0].tempideal;
+      });
+    },
+    returnValue(data, arg) {
+      data.for
     }
   }
 };
