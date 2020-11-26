@@ -77,7 +77,7 @@ router.get('/statusReles', async (req, res, next) => {
   }
 })
 
-router.get('/configTimer/:idsensor', async (req, res, next) => {
+router.get('/configTimer', async (req, res, next) => {
   let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READONLY, (err) => {
     if (err) {
       console.error(err.message);
@@ -85,13 +85,13 @@ router.get('/configTimer/:idsensor', async (req, res, next) => {
     console.log('Connected to the chinook database.');
   })
   try {
-    logger.info(`GET: /ConfigTimer`)
-    db.all(`SELECT acao, hora FROM ConfigTimer WHERE idsensor = '${req.params.idsensor}'`, [], (err, rows) => {
+    logger.info(`GET: /configTimer`)
+    db.all(`SELECT acao, hora, idsensor FROM ConfigTimer`, [], (err, rows) => {
       if(err) throw err
       res.send(JSON.stringify(rows));
     })
   } catch (error) {
-    logger.info(`Erro na rota /ConfigTimer: ${error.message}`)
+    logger.info(`Erro na rota /configTimer: ${error.message}`)
   }
   finally {
     db.close(() => {
@@ -109,13 +109,13 @@ router.get('/configTemp', async (req, res, next) => {
     console.log('Connected to the chinook database.');
   })
   try {
-    logger.info(`GET: /ConfigTemp`)
-    db.all(`SELECT tempmin, tempideal, tempmax, idsensor FROM ConfigTemp'`, [], (err, rows) => {
+    logger.info(`GET: /configTemp`)
+    db.all(`SELECT tempmin, tempideal, tempmax, idsensor FROM ConfigTemp`, [], (err, rows) => {
       if(err) throw err
       res.send(JSON.stringify(rows));
     })
   } catch (error) {
-    logger.info(`Erro na rota /ConfigTemp: ${error.message}`)
+    logger.info(`Erro na rota /configTemp: ${error.message}`)
   }
   finally {
     db.close(() => {
