@@ -76,11 +76,16 @@ router.get('/statusReles', async (req, res, next) => {
   }
 })
 
-router.get('/configTimer/:idSensor', async (req, res, next) => {
+router.get('/configTimer/:idsensor', async (req, res, next) => {
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READONLY, (err) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log('Connected to the chinook database.');
+  })
   try {
     logger.info(`GET: /ConfigTimer`)
-    let db = new sqlite3.Database('/home/pi/aquaberry.db')
-    db.all(`SELECT acao, hora FROM ConfigTimer WHERE idsensor = '${req.params.idSensor}'`, [], (err, rows) => {
+    db.all(`SELECT acao, hora FROM ConfigTimer WHERE idsensor = '${req.params.idsensor}'`, [], (err, rows) => {
       if(err) throw err
       res.send(JSON.stringify(rows));
     })
@@ -96,9 +101,14 @@ router.get('/configTimer/:idSensor', async (req, res, next) => {
 
 
 router.get('/configTemp', async (req, res, next) => {
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READONLY, (err) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log('Connected to the chinook database.');
+  })
   try {
     logger.info(`GET: /ConfigTemp`)
-    let db = new sqlite3.Database('/home/pi/aquaberry.db')
     db.all(`SELECT tempmin, tempideal, tempmax, idsensor FROM ConfigTemp'`, [], (err, rows) => {
       if(err) throw err
       res.send(JSON.stringify(rows));
@@ -325,7 +335,7 @@ const lerPh = () => {
 
 const handleIluminacao = () => {
   let date = new Date()
-  let hour = date.getTime()
+  let hour = Date.parse(`01/01/2011 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`)
 
   console.log(`Hora atual: ${hour}`)
   if (hour >= options.ON_LUZ) {
@@ -350,49 +360,53 @@ const handleIluminacao = () => {
 
 // Função para setar as options
 const setOptions = () => {
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READONLY, (err) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log('Connected to the chinook database.');
+  })
   try {
-    logger.info(`Trazendo infos do banco`)
-    let db = new sqlite3.Database('/home/pi/aquaberry.db')
+   console.log(`Trazendo infos do banco`)
     db.all(`SELECT acao, hora, idsensor FROM ConfigTimer`, [], (err, rows) => {
-      logger.info(`Configurando timers`)
+     console.log(`Configurando timers`)
+     console.log(rows)
       if(err) throw err
       rows.forEach(el => {
-        if(el.idSensor === 5){
+        if(el.idsensor === 5){
           if (el.acao === 0) {
-            let date = new Date()
-            let horas = el.hora.split(':',1)
-            date.setHours(horas[0], horas[1], horas[2])
-            options.ON_LUZ = date.getTime()
+            let hour = Date.parse(`01/01/2011 ${el.hora}`)
+            options.ON_LUZ = hour
           } else {
-            let date = new Date()
-            let horas = el.hora.split(':',1)
-            date.setHours(horas[0], horas[1], horas[2])
-            options.OFF_LUZ = date.getTime()
+            let hour = Date.parse(`01/01/2011 ${el.hora}`)
+            options.OFF_LUZ = hour
           }
         }
-        else if (el.idSensor === 6) {
-          let date = new Date()
-          let horas = el.hora.split(':',1)
-          date.setHours(horas[0], horas[1], horas[2])
-          options.ALIMENTACAO.push(date)
+        else if (el.idsensor === 6) {
+          let hour = Date.parse(`01/01/2011 ${el.hora}`)
+          options.ALIMENTACAO.push(hour)
         }
       });
     })
-    db.all(`SELECT tempmin, tempideal, tempmax`, [], (err, rows) => {
-      logger.info(`Configurando temperatura`)
+    db.all(`SELECT tempmin, tempideal, tempmax, idsensor FROM ConfigTemp`, [], (err, rows) => {
+     console.log(`Configurando temperatura`)
+     console.log(rows)
+     console.log('idsensor: ', rows[0].idsensor)
       if(err) throw err
-      if (rows[0].idSensor === 1) {
+      if (rows[0].idsensor === 1) {
         options.MIN_TEMP = rows[0].tempmin
         options.IDEAL_TEMP = rows[0].tempideal
         options.MAX_TEMP = rows[0].tempmax
+        console.log('Options')
+        console.log(options)
       }
     })
   } catch (error) {
-    logger.info(`Erro no setOptions()`)
+   console.log(`Erro no setOptions()`)
   }
   finally {
     db.close(() => {
-      logger.info('Conexão com o banco fechada.')
+      console.log('Conexão com o banco fechada.')
     })
   }
 }
