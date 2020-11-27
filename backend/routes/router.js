@@ -261,6 +261,34 @@ router.put("/configTimer", async (req, res, next) => {
   }
 })
 
+router.delete("/configTimer", async (req, res, next) => {
+  if ( !req.body.acao || !req.body.hora ) {
+    throw new Error("acao e hora são obrigatórios")
+  }
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) throw err
+    console.log('Conectado ao banco.')
+  })
+  try {
+    logger.info(`DELETE: /configTimer`)
+    db.run(`DELETE FROM ConfigTimer WHERE idsensor=? and acao=? and hora=?`, [6, req.body.acao, req.body.hora], (err) => {
+      if (err) {
+        throw err
+       } else {
+        res.status(200).send({ status: 'success', message: 'Deleted' })
+       }
+    })
+  } catch (err) {
+       logger.error(`Erro ao deletar um Timer: ${err}`)
+       res.status(500).send({status: 'error', err: err})
+  }
+  finally {
+    db.close( () => {
+      logger.info('Conexão com o banco fechada')
+    })
+  }
+})
+
 // Websocket
 wss.on('connection', (ws) => {
   enviarInfo(ws)
