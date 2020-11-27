@@ -58,6 +58,7 @@
         ></b-switch>
       </b-field>
     </div>
+    <b-loading :is-full-page="true" v-model="isLoading"></b-loading>
   </div>
 </template>
 
@@ -69,6 +70,7 @@ export default {
   name: "Status",
   data: function() {
     return {
+      isLoading: false,
       status: {
         aquecedor: false,
         filtroagua: false,
@@ -101,29 +103,36 @@ export default {
   },
   methods: {
     setStatus() {
+      this.isLoading = true;
       API.getStatusReles().then(value => {
         this.status = value;
+        this.isLoading = false;
       });
     },
     inputToggle(event) {
-      event.target.disabled = true;
+      this.isLoading = true;
       if (event.target.checked) {
+        event.target.disabled = true;
         API.postReleOn(event.target.name).then(() => {
           this.$buefy.toast.open({
             message: `${event.target.name.toUpperCase()} ligado`
           });
           event.target.disabled = false;
+          this.isLoading = false;
         });
       } else {
+        event.target.disabled = true;
         API.postReleOff(event.target.name).then(() => {
           this.$buefy.toast.open({
             message: `${event.target.name.toUpperCase()} desligado`
           });
           event.target.disabled = false;
+          this.isLoading = false;
         });
       }
     },
     manualToggle(event) {
+      this.isLoading = true;
       event.target.disabled = true;
       if (event.target.checked) {
         API.postTempManualOn().then(() => {
@@ -132,6 +141,8 @@ export default {
           });
           event.target.disabled = false;
           event.target.checked = true;
+          event.target.disabled = false;
+          this.isLoading = false;
         });
       } else {
         API.postTempManualOff().then(() => {
@@ -140,6 +151,7 @@ export default {
           });
           event.target.disabled = false;
           event.target.checked = false;
+          this.isLoading = false;
         });
       }
     },

@@ -69,6 +69,7 @@
     <div class="buttons">
       <b-button type="is-dark" expanded>Salvar Informações</b-button>
     </div>
+    <b-loading :is-full-page="true" v-model="isLoading"></b-loading>
   </section>
 </template>
 
@@ -84,7 +85,8 @@ export default {
       idealTemp: "",
       horaAlimentacao: [],
       iniLuz: "",
-      fimLuz: ""
+      fimLuz: "",
+      isLoading: false
     };
   },
   created: function() {
@@ -96,6 +98,7 @@ export default {
       this.horaAlimentacao.push({ value: "" });
     },
     setConfigTimer() {
+      this.isLoading = true;
       API.getConfigTimer().then(data => {
         data.forEach( el =>{
           if(el.idsensor === 5){
@@ -109,6 +112,7 @@ export default {
             this.horaAlimentacao.push({value: el.hora})
           }
         })
+        this.isLoading = false;
       });
     },
     setConfigTemp() {
@@ -116,6 +120,7 @@ export default {
         this.maxTemp = data[0].tempmax;
         this.minTemp = data[0].tempmin;
         this.idealTemp = data[0].tempideal;
+        this.isLoading = false;
       });
     },
     returnValue(data, arg) {
