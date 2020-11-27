@@ -196,10 +196,12 @@ router.post("/newFeedTime", async (req, res, next) => {
     }
   } catch (err) {
        logger.error(`Erro ao inserir novo timer: ${err}`)
-       res.send(err)
+       res.status(500).send({status: 'error', err: err})
   }
   finally {
-    db.close()
+    db.close( () => {
+      logger.info('Conexão com o banco fechada')
+    })
   }
 })
 
@@ -222,10 +224,12 @@ router.put("/configTemp", async (req, res, next) => {
     })
   } catch (err) {
        logger.error(`Erro ao atualizar a temperatura: ${err}`)
-       res.send(err)
+       res.status(500).send({status: 'error', err: err})
   }
   finally {
-    db.close()
+    db.close( () => {
+      logger.info('Conexão com o banco fechada')
+    })
   }
 })
 
@@ -248,10 +252,12 @@ router.put("/configTimer", async (req, res, next) => {
     })
   } catch (err) {
        logger.error(`Erro ao atualizar o ConfigTimer: ${err}`)
-       res.send(err)
+       res.status(500).send({status: 'error', err: err})
   }
   finally {
-    db.close()
+    db.close( () => {
+      logger.info('Conexão com o banco fechada')
+    })
   }
 })
 
