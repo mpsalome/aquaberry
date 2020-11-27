@@ -4,12 +4,12 @@ from time import sleep
 myGPIO=25
 
 servo = Servo(myGPIO)
-print("Rassberry Pi Servo"); 
-while True:
+print("Raspberry Pi Servo");
+sleep(10)
+for i in range(0,4):
     print("max")
     servo.max()
-    sleep(5)
+    sleep(2)
     print("min")
     servo.min()
-   
-    sleep(5)
+    sleep(2)
