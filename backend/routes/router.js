@@ -234,8 +234,8 @@ router.put("/configTemp", async (req, res, next) => {
 })
 
 router.put("/configTimer", async (req, res, next) => {
-  if ( !req.body.acao || !req.body.hora ) {
-    throw new Error("acao e hora são obrigatórios")
+  if ( !req.body.acao || !req.body.newhora || !req.body.oldhora) {
+    throw new Error("acao, newhora e oldhora são obrigatórios")
   }
   let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
     if (err) throw err
@@ -243,7 +243,7 @@ router.put("/configTimer", async (req, res, next) => {
   })
   try {
     logger.info(`PUT: /configTimer`)
-    db.run(`UPDATE ConfigTimer SET acao=?, hora=? WHERE idsensor=5 and acao=?`, [req.body.acao, req.body.hora, req.body.acao], (err) => {
+    db.run(`UPDATE ConfigTimer SET acao=?, hora=? WHERE idsensor=5 and acao=? and hora=?`, [req.body.acao, req.body.newhora, req.body.acao, req.body.oldhora], (err) => {
       if (err) {
         throw err
        } else {
