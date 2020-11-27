@@ -172,6 +172,37 @@ router.post('/tempManualOn', async (req, res, next) => {
   }
 })
 
+router.post("/newFeedTime", async (req, res, next) => {
+  if ( !req.body.hora) {
+    throw new Error("hora é obrigatório")
+  }
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) throw err
+    console.log('Conectado ao banco.');
+  })
+  try {
+    logger.info(`POST: /newFeedTime`)
+    let hour = Date.parse(`01/01/2011 ${req.body.hora}`)
+    if (options.ALIMENTACAO.includes(hour)) {
+        throw new Error('Timer já existente')
+     } else {
+      db.run(`INSERT INTO ConfigTimer(acao, hora, idsensor) VALUES(?, ?, ?)`, [0, req.body.hora, 6], (err) => {
+        if (err) {
+          throw err
+        } else {
+          res.status(200).send({ status: 'success', message: 'Inserted' })
+        }
+      })
+    }
+  } catch (err) {
+       logger.error(`Erro ao inserir novo timer: ${err}`)
+       res.send(err)
+  }
+  finally {
+    db.close()
+  }
+})
+
 router.put("/configTemp", async (req, res, next) => {
   if ( !req.body.tempmin || !req.body.tempideal || !req.body.tempmax ) {
     throw new Error("tempmin, tempideal e tempmax são obrigatórios")
