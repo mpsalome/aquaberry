@@ -82,7 +82,7 @@ router.get('/configTimer', async (req, res, next) => {
     if (err) {
       console.error(err.message);
     }
-    console.log('Connected to the chinook database.');
+    console.log('Conectado ao banco.');
   })
   try {
     logger.info(`GET: /configTimer`)
@@ -106,7 +106,7 @@ router.get('/configTemp', async (req, res, next) => {
     if (err) {
       console.error(err.message);
     }
-    console.log('Connected to the chinook database.');
+    console.log('Conectado ao banco.');
   })
   try {
     logger.info(`GET: /configTemp`)
@@ -169,6 +169,58 @@ router.post('/tempManualOn', async (req, res, next) => {
   } catch (err) {
     logger.info(`Erro ao ligar o modo manual: ${err}`)
     next(err)
+  }
+})
+
+router.put("/configTemp", async (req, res, next) => {
+  if ( !req.body.tempmin || !req.body.tempideal || !req.body.tempmax ) {
+    throw new Error("tempmin, tempideal e tempmax são obrigatórios")
+  }
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) throw err
+    console.log('Conectado ao banco.');
+  })
+  try {
+    logger.info(`PUT: /configTemp`)
+    db.run(`UPDATE ConfigTemp SET tempmin=?, tempideal=?, tempmax=? WHERE idsensor=1`, [req.body.tempmin, req.body.tempideal, req.body.tempmax], (err) => {
+      if (err) {
+        throw err
+       } else {
+        res.status(200).send({ status: 'success', message: 'Updated' })
+       }
+    })
+  } catch (err) {
+       logger.error(`Erro ao atualizar a temperatura: ${err}`)
+       res.send(err)
+  }
+  finally {
+    db.close()
+  }
+})
+
+router.put("/configTimer", async (req, res, next) => {
+  if ( !req.body.acao || !req.body.hora ) {
+    throw new Error("acao e hora são obrigatórios")
+  }
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) throw err
+    console.log('Conectado ao banco.')
+  })
+  try {
+    logger.info(`PUT: /configTimer`)
+    db.run(`UPDATE ConfigTimer SET acao=?, hora=? WHERE idsensor=5 and acao=?`, [req.body.acao, req.body.hora, req.body.acao], (err) => {
+      if (err) {
+        throw err
+       } else {
+        res.status(200).send({ status: 'success', message: 'Updated' })
+       }
+    })
+  } catch (err) {
+       logger.error(`Erro ao atualizar o ConfigTimer: ${err}`)
+       res.send(err)
+  }
+  finally {
+    db.close()
   }
 })
 
@@ -372,7 +424,7 @@ const setOptions = () => {
     if (err) {
       console.error(err.message);
     }
-    console.log('Connected to the chinook database.');
+    console.log('Conectado ao banco.');
   })
   try {
    console.log(`Trazendo infos do banco`)
