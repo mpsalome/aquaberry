@@ -191,6 +191,7 @@ router.post("/newFeedTime", async (req, res, next) => {
         } else {
           res.status(200).send({ status: 'success', message: 'Inserted' })
           setOptions()
+          handleAlimentacao()
         }
       })
     }
