@@ -13,3 +13,4 @@ for i in range(0,4):
     print("min")
     servo.min()
     sleep(2)
+print("Peixe alimentado");
