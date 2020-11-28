@@ -280,7 +280,9 @@ export default {
           this.isLoading = true;
           let itensProcessed = 0
           this.deletedHora.forEach((hora, index, array) => {
-              API.deleteConfigTimer({ acao: "0", hora: `${hora.value}`}).then(data => {
+              let timer = {acao: 0, hora: hora.value}
+              console.log(timer)
+              API.deleteConfigTimer(timer).then(data => {
                 this.showDialog("Informações salvas.", "is-success")
                 document.querySelectorAll('div.control > input').forEach(el => {
                   el.disabled = true

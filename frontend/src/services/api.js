@@ -100,7 +100,7 @@ export default {
   },
   deleteConfigTimer(timerInfo) {
     return axios
-      .delete(`${IP}/configTimer`, timerInfo)
+      .delete(`${IP}/configTimer/${timerInfo.acao}/${timerInfo.hora}`)
       .then(response => {
         return response;
       })
