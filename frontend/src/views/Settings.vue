@@ -70,6 +70,7 @@
         v-model="hora.value"
         :disabled="hora.value.length < 8 ? false : true"
         class="deleteTimer newTimer"
+        v-cleave="masks.time"
       ></b-input>
       <b-icon
         pack="fa"
@@ -92,6 +93,7 @@
         v-model="iniLuz"
         :disabled="iniLuz !== '' ? true : false"
         class="startTime"
+        v-cleave="masks.time"
       ></b-input>
       <b-icon
         pack="fa"
@@ -110,6 +112,7 @@
         v-model="fimLuz"
         :disabled="fimLuz !== '' ? true : false"
         class="endTime"
+        v-cleave="masks.time"
       ></b-input>
       <b-icon
         pack="fa"
@@ -136,8 +139,22 @@
 <script>
 /* eslint-disable */
 import API from "@/services/api";
+import Cleave from 'cleave.js'
+
+const cleave = {
+  name: 'cleave',
+  bind(el, binding) {
+      const input = el.querySelector('input')
+      input._vCleave = new Cleave(input, binding.value)
+  },
+  unbind(el) {
+      const input = el.querySelector('input')
+      input._vCleave.destroy()
+  }
+}
 
 export default {
+  directives: { cleave },
   data() {
     return {
       maxTemp: "",
@@ -150,6 +167,13 @@ export default {
       infoEdit: false,
       actionsMade: [],
       deletedHora: [],
+      masks: {
+        time: {
+            delimiters: [':', ':'],
+            blocks: [2, 2, 2],
+            numericOnly: true
+        }
+      }
     };
   },
   created: function() {
@@ -273,7 +297,7 @@ export default {
           position: 'is-top',
           type
       })
-    }
+    },
   }
 };
 </script>
