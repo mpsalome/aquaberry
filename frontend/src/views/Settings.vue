@@ -128,7 +128,7 @@
         type="is-dark"
         @click="sendNewInfo"
         expanded
-        :disabled="actionsMade === [] ? true : false"
+        :disabled="actionsMade.length !== 0 ? false : true"
         >Salvar Informações</b-button
       >
     </div>
