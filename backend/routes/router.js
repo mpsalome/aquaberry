@@ -11,7 +11,7 @@ const Raspi = require('raspi')
 const I2C = require('raspi-i2c').I2C
 const ADS1x15 = require('raspi-kit-ads1x15')
 const sensor = ds18x20
-const { spawn } = require('child_process')
+const childProcess = require("child_process");
 
 const router = express.Router()
 
@@ -475,15 +475,11 @@ const handleAlimentacao = () => {
 
   console.log(`Hora atual: ${hour}`)
   if (options.ALIMENTACAO.findIndex(hora => hora.value === hour) > -1) {
-
-    let python = spawn('python', ['../servo.py'])
-    python.stdout.on('data', function (data) {
-        logger.info('Pipe data from python script ...', data.toString());
+    var cp = childProcess.fork("./runpy.js");
+    cp.on("exit", function (code, signal) {
+        console.log("Exited", {code: code, signal: signal});
     });
-    python.on('close', (code) => {
-        logger.info(`child process close all stdio with code ${code}`);
-    });
-
+    cp.on("error", console.error.bind(console));
   }
 }
 
