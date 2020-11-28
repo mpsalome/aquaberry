@@ -263,8 +263,8 @@ router.put("/configTimer", async (req, res, next) => {
   }
 })
 
-router.delete("/configTimer", async (req, res, next) => {
-  if ( !req.body.acao || !req.body.hora ) {
+router.delete("/configTimer/:acao/:hora", async (req, res, next) => {
+  if ( !req.params.acao || !req.params.hora ) {
     throw new Error("acao e hora são obrigatórios")
   }
   let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
@@ -273,7 +273,7 @@ router.delete("/configTimer", async (req, res, next) => {
   })
   try {
     logger.info(`DELETE: /configTimer`)
-    db.run(`DELETE FROM ConfigTimer WHERE idsensor=? and acao=? and hora=?`, [6, req.body.acao, req.body.hora], (err) => {
+    db.run(`DELETE FROM ConfigTimer WHERE idsensor=? and acao=? and hora=?`, [6, req.params.acao, req.params.hora], (err) => {
       if (err) {
         throw err
        } else {
