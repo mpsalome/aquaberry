@@ -67,5 +67,45 @@ export default {
       .catch(error => {
         return error;
       });
+  },
+  postNewFeedTime(newTime) {
+    return axios
+      .post(`${IP}/newFeedTime`, newTime)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
+  },
+  putConfigTemp(tempInfo) {
+    return axios
+      .put(`${IP}/configTemp`, tempInfo)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
+  },
+  putConfigTimer(timerInfo) {
+    return axios
+      .put(`${IP}/configTimer`, timerInfo)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
+  },
+  deleteConfigTimer(timerInfo) {
+    return axios
+      .delete(`${IP}/configTimer`, timerInfo)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
   }
 };

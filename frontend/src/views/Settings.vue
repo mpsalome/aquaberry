@@ -11,7 +11,16 @@
         icon="thermometer-full"
         v-model="maxTemp"
         :disabled="maxTemp !== '' ? true : false"
+        class="maxTemp"
       ></b-input>
+      <b-icon
+        pack="fa"
+        class="fakeButton maxTemp"
+        icon="edit"
+        size="is-small"
+        @click.native="editInfo"
+      >
+      </b-icon>
     </b-field>
     <b-field>
       <b-input
@@ -21,7 +30,16 @@
         icon="thermometer-half"
         v-model="idealTemp"
         :disabled="idealTemp !== '' ? true : false"
+        class="idealTemp"
       ></b-input>
+      <b-icon
+        pack="fa"
+        class="fakeButton idealTemp"
+        icon="edit"
+        size="is-small"
+        @click.native="editInfo"
+      >
+      </b-icon>
     </b-field>
     <b-field>
       <b-input
@@ -31,7 +49,16 @@
         icon="thermometer-empty"
         v-model="minTemp"
         :disabled="minTemp !== '' ? true : false"
+        class="minTemp"
       ></b-input>
+      <b-icon
+        pack="fa"
+        class="fakeButton minTemp"
+        icon="edit"
+        size="is-small"
+        @click.native="editInfo"
+      >
+      </b-icon>
     </b-field>
 
     <h3 class="subtitle">Controle de Alimentação</h3>
@@ -41,10 +68,19 @@
         icon-pack="far"
         icon="clock"
         v-model="hora.value"
-        :disabled="hora.value !== '' ? true : false"
+        :disabled="hora.value.length < 8 ? false : true"
+        class="deleteTimer newTimer"
       ></b-input>
+      <b-icon
+        pack="fa"
+        class="fakeButton deleteTimer"
+        icon="trash"
+        size="is-small"
+        @click.native="editInfo"
+      >
+      </b-icon>
     </b-field>
-    <b-button type="is-info" icon-left="plus" @click="addHora"
+    <b-button type="is-info" icon-left="plus" class="newTimer" @click="addHora"
       >Adicionar horário</b-button
     >
     <h3 class="subtitle">Controle da Iluminação</h3>
@@ -55,7 +91,16 @@
         icon="sun"
         v-model="iniLuz"
         :disabled="iniLuz !== '' ? true : false"
+        class="startTime"
       ></b-input>
+      <b-icon
+        pack="fa"
+        class="fakeButton startTime"
+        icon="edit"
+        size="is-small"
+        @click.native="editInfo"
+      >
+      </b-icon>
     </b-field>
     <b-field>
       <b-input
@@ -64,10 +109,25 @@
         icon="moon"
         v-model="fimLuz"
         :disabled="fimLuz !== '' ? true : false"
+        class="endTime"
       ></b-input>
+      <b-icon
+        pack="fa"
+        class="fakeButton endTime"
+        icon="edit"
+        size="is-small"
+        @click.native="editInfo"
+      >
+      </b-icon>
     </b-field>
     <div class="buttons">
-      <b-button type="is-dark" expanded>Salvar Informações</b-button>
+      <b-button
+        type="is-dark"
+        @click="sendNewInfo"
+        expanded
+        :disabled="actionsMade === [] ? true : false"
+        >Salvar Informações</b-button
+      >
     </div>
     <b-loading :is-full-page="true" v-model="isLoading"></b-loading>
   </section>
@@ -86,7 +146,10 @@ export default {
       horaAlimentacao: [],
       iniLuz: "",
       fimLuz: "",
-      isLoading: false
+      isLoading: false,
+      infoEdit: false,
+      actionsMade: [],
+      deletedHora: [],
     };
   },
   created: function() {
@@ -125,7 +188,103 @@ export default {
     },
     returnValue(data, arg) {
       data.for
+    },
+    editInfo(event){
+      if (event.currentTarget.className.includes('maxTemp')) {
+        this.actionsMade.push('maxTemp')
+        document.querySelector('div.maxTemp > input').disabled = false;
+      } 
+      else if (event.currentTarget.className.includes('idealTemp')) {
+        this.actionsMade.push('idealTemp')
+        document.querySelector('div.idealTemp > input').disabled = false;
+      } 
+      else if (event.currentTarget.className.includes('minTemp')) {
+        this.actionsMade.push('minTemp')
+        document.querySelector('div.minTemp > input').disabled = false;
+      }
+      else if (event.currentTarget.className.includes('startTime')) {
+        this.actionsMade.push('startTime')
+        document.querySelector('div.startTime > input').disabled = false;
+      }
+      else if (event.currentTarget.className.includes('endTime')) {
+        this.actionsMade.push('endTime')
+        document.querySelector('div.endTime > input').disabled = false;
+      }
+      else if (event.currentTarget.className.includes('deleteTimer')) {
+        let hora = event.currentTarget.previousSibling.firstChild.value
+        this.deletedHora.push({value: hora})
+        let index = this.horaAlimentacao.findIndex(el => el.value === hora)
+        this.horaAlimentacao.splice(index,1)
+        this.actionsMade.push('deleteTimer')
+      }
+    }, 
+    sendNewInfo(){
+     if (this.actionsMade.includes('maxTemp') || this.actionsMade.includes('idealTemp') || this.actionsMade.includes('minTemp')) {
+        this.isLoading = true;
+        API.putConfigTemp({tempmin: this.minTemp, tempideal: this.idealTemp,tempmax: this.maxTemp}).then(data => {
+          this.showDialog("Informações salvas.", "is-success")
+          document.querySelectorAll('div.control > input').forEach(el => {
+            el.disabled = true
+          })
+          this.isLoading = false;
+        });
+      } 
+      if (this.actionsMade.includes('startTime')) {
+          this.isLoading = true;
+          API.putConfigTimer({idsensor: "5", acao: "0", hora: `${this.iniLuz}`}).then(data => {
+            this.showDialog("Informações salvas.", "is-success")
+            document.querySelectorAll('div.control > input').forEach(el => {
+              el.disabled = true
+            })
+            this.isLoading = false;
+          });
+      } 
+      if (this.actionsMade.includes('endTime')) {
+          this.isLoading = true;
+          API.putConfigTimer({idsensor: "5", acao: "1", hora: `${this.fimLuz}`}).then(data => {
+            this.showDialog("Informações salvas.", "is-success")
+            document.querySelectorAll('div.control > input').forEach(el => {
+              el.disabled = true
+            })
+            this.isLoading = false;
+          });
+      } 
+      if (this.actionsMade.includes('deleteTimer')) {
+          this.isLoading = true;
+          let itensProcessed = 0
+          this.deletedHora.forEach((hora, index, array) => {
+              API.deleteConfigTimer({ acao: "0", hora: `${hora.value}`}).then(data => {
+                this.showDialog("Informações salvas.", "is-success")
+                document.querySelectorAll('div.control > input').forEach(el => {
+                  el.disabled = true
+                })
+                itensProcessed++
+                if (itensProcessed === array.length) {
+                  this.isLoading = false;
+                }
+            });
+          });
+      } 
+    },
+    showDialog(message, type, ) {
+      this.$buefy.toast.open({
+          duration: 5000,
+          message,
+          position: 'is-top',
+          type
+      })
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+  .control {
+    width: 100%;
+  }
+  .fakeButton {
+    position: relative;
+    top: 31%;
+    left: 10px;
+    cursor: pointer;
+  }
+</style>
