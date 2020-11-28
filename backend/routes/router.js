@@ -470,10 +470,21 @@ const handleIluminacao = () => {
 }
 
 const handleAlimentacao = () => {
-  let python = spawn('python', ['../servo.py'])
-  python.stdout.on('data', function(data) { 
-    console.log(data.toString()); 
-  }) 
+  let date = new Date()
+  let hour = Date.parse(`01/01/2011 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`)
+
+  console.log(`Hora atual: ${hour}`)
+  if (options.ALIMENTACAO.findIndex(hora => hora.value === hour) > -1) {
+
+    let python = spawn('python', ['../servo.py'])
+    python.stdout.on('data', function (data) {
+        logger.info('Pipe data from python script ...', data.toString());
+    });
+    python.on('close', (code) => {
+        logger.info(`child process close all stdio with code ${code}`);
+    });
+
+  }
 }
 
 // ids dos sensores/atuadores: 
@@ -501,6 +512,7 @@ const setOptions = () => {
      console.log(`Configurando timers`)
      console.log(rows)
       if(err) throw err
+      options.ALIMENTACAO = []
       rows.forEach(el => {
         if(el.idsensor === 5){
           if (el.acao === 0) {
