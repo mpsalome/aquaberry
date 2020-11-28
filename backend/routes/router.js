@@ -100,7 +100,6 @@ router.get('/configTimer', async (req, res, next) => {
   }
 })
 
-
 router.get('/configTemp', async (req, res, next) => {
   let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READONLY, (err) => {
     if (err) {
@@ -191,6 +190,7 @@ router.post("/newFeedTime", async (req, res, next) => {
           throw err
         } else {
           res.status(200).send({ status: 'success', message: 'Inserted' })
+          setOptions()
         }
       })
     }
@@ -220,6 +220,7 @@ router.put("/configTemp", async (req, res, next) => {
         throw err
        } else {
         res.status(200).send({ status: 'success', message: 'Updated' })
+        setOptions()
        }
     })
   } catch (err) {
@@ -248,6 +249,7 @@ router.put("/configTimer", async (req, res, next) => {
         throw err
        } else {
         res.status(200).send({ status: 'success', message: 'Updated' })
+        setOptions()
        }
     })
   } catch (err) {
@@ -276,6 +278,7 @@ router.delete("/configTimer", async (req, res, next) => {
         throw err
        } else {
         res.status(200).send({ status: 'success', message: 'Deleted' })
+        setOptions()
        }
     })
   } catch (err) {
