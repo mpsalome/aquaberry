@@ -181,8 +181,9 @@ export default {
     this.setConfigTemp();
   },
   methods: {
-    addHora: function() {
+    addHora (event) {
       this.horaAlimentacao.push({ value: "" });
+      this.editInfo(event)
     },
     setConfigTimer() {
       this.isLoading = true;
@@ -240,6 +241,8 @@ export default {
         let index = this.horaAlimentacao.findIndex(el => el.value === hora)
         this.horaAlimentacao.splice(index,1)
         this.actionsMade.push('deleteTimer')
+      }else if(event.currentTarget.className.includes('newTimer')) {
+        this.actionsMade.push('newTimer')
       }
     }, 
     sendNewInfo(){
@@ -288,6 +291,19 @@ export default {
                 }
             });
           });
+      }
+      if (this.actionsMade.includes('newTimer')) {
+        this.isLoading = true;
+        let itensProcessed = 0
+        this.horaAlimentacao.forEach((hora, index, array) => {
+          API.postNewFeedTime({hora: hora.value}).then(data => {
+            this.showDialog("Informações salvas.", "is-success")
+            document.querySelectorAll('div.control > input').forEach(el => {
+              el.disabled = true
+            })
+            this.isLoading = false;
+          })
+        })
       } 
     },
     showDialog(message, type, ) {
