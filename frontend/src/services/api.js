@@ -78,6 +78,27 @@ export default {
         return error;
       });
   },
+  postLogin(login) {
+    return axios
+      .post(`${IP}/login`, login)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
+  },
+  postVerifyJWT() {
+    let teste = localStorage.getItem("token");
+    return axios
+      .post(`${IP}/verifyJWT`, teste)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
+  },
   putConfigTemp(tempInfo) {
     return axios
       .put(`${IP}/configTemp`, tempInfo)

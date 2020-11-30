@@ -1,6 +1,8 @@
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 
+require('dotenv').config()
+
 import express from 'express'
 import ds18x20 from 'ds18x20'
 const wsserver = require('ws').Server
@@ -12,6 +14,7 @@ const I2C = require('raspi-i2c').I2C
 const ADS1x15 = require('raspi-kit-ads1x15')
 const sensor = ds18x20
 const childProcess = require("child_process");
+const jwt = require('jsonwebtoken');
 
 const router = express.Router()
 
@@ -121,6 +124,33 @@ router.get('/configTemp', async (req, res, next) => {
       logger.info('Conexão com o banco fechada.')
     })
   }
+})
+
+router.post('/login', (req, res, next) => {
+  if (req.body.user === process.env.USER && req.body.password === process.env.PASSWORD ) {
+    const id = 1
+    const token = jwt.sign({ id }, process.env.SECRET, {
+      expiresIn: '1d'
+    });
+    console.log('token', token)
+    res.send(JSON.stringify({ auth: true, token: token }))
+  }
+  else {
+    res.status(500).json({message: 'Login inválido!'}).send();
+  }
+  
+})
+
+router.post('/verifyJWT', (req, res, next) => {
+  let token = req.body.token 
+  jwt.verify(token, process.env.SECRET, function(err, decoded) {
+    if (err) {
+      return res.status(500).json({ auth: false, message: `Failed to authenticate token: ${err}` }).send()
+    }
+    else {
+      return res.status(200).send()
+    }
+  });
 })
 
 router.post('/releOff', async (req, res, next) => {
@@ -454,6 +484,7 @@ const lerPh = () => {
     console.error(`Falha ao tentar ler o pH: ${err}`)
   }
 }
+
 
 const handleIluminacao = () => {
   let date = new Date()
