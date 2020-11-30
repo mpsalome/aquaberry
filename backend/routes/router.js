@@ -502,16 +502,19 @@ const handleIluminacao = () => {
 
 const handleAlimentacao = () => {
   let date = new Date()
-  let hour = Date.parse(`01/01/2011 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`)
+  let hour = Date.parse(`01/01/2011 ${date.getHours()}:${date.getMinutes()}:00}`)
 
-  console.log(`Hora atual: ${hour}`)
-  if (options.ALIMENTACAO.findIndex(hora => hora.value === hour) > -1) {
-    var cp = childProcess.fork("./runpy.js");
+  console.log(`( Alimentação ) - Hora atual: ${hour}`)
+  console.log(`${options.ALIMENTACAO}`)
+  options.ALIMENTACAO.forEach(horario => {
+    if (horario === hour ) {
+      var cp = childProcess.fork("./runpy.js");
     cp.on("exit", function (code, signal) {
         console.log("Exited", {code: code, signal: signal});
     });
     cp.on("error", console.error.bind(console));
-  }
+    }
+  });
 }
 
 // ids dos sensores/atuadores: 
@@ -551,7 +554,7 @@ const setOptions = () => {
           }
         }
         else if (el.idsensor === 6) {
-          let hour = Date.parse(`01/01/2011 ${el.hora}`)
+          let hour = Date.parse(`01/01/2011 ${el.hora.split(":",2).join(":")}:00`)
           options.ALIMENTACAO.push(hour)
         }
       });
