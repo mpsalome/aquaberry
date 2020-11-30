@@ -128,15 +128,29 @@ router.get('/configTemp', async (req, res, next) => {
 
 router.post('/login', (req, res, next) => {
   if (req.body.user === process.env.USER && req.body.password === process.env.PASSWORD ) {
-    //auth ok
-    const id = 1; //esse id viria do banco de dados
+    const id = 1
     const token = jwt.sign({ id }, process.env.SECRET, {
       expiresIn: '1d'
     });
-    return res.json({ auth: true, token: token });
+    console.log('token', token)
+    res.send(JSON.stringify({ auth: true, token: token }))
+  }
+  else {
+    res.status(500).json({message: 'Login inválido!'}).send();
   }
   
-  res.status(500).json({message: 'Login inválido!'});
+})
+
+router.post('/verifyJWT', (req, res, next) => {
+  let token = req.body.token 
+  jwt.verify(token, process.env.SECRET, function(err, decoded) {
+    if (err) {
+      return res.status(500).json({ auth: false, message: `Failed to authenticate token: ${err}` }).send()
+    }
+    else {
+      return res.status(200).send()
+    }
+  });
 })
 
 router.post('/releOff', async (req, res, next) => {
@@ -470,6 +484,7 @@ const lerPh = () => {
     console.error(`Falha ao tentar ler o pH: ${err}`)
   }
 }
+
 
 const handleIluminacao = () => {
   let date = new Date()
