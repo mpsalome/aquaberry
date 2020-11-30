@@ -502,7 +502,7 @@ const handleIluminacao = () => {
 
 const handleAlimentacao = () => {
   let date = new Date()
-  let hour = Date.parse(`01/01/2011 ${date.getHours()}:${date.getMinutes()}:00}`)
+  let hour = Date.parse(`01/01/2011 ${date.getHours()}:${date.getMinutes()}:00`)
 
   console.log(`( Alimentação ) - Hora atual: ${hour}`)
   console.log(`${options.ALIMENTACAO}`)
