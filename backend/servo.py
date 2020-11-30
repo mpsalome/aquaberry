@@ -1,16 +1,29 @@
 from gpiozero import Servo
 from time import sleep
- 
-myGPIO=25
+import RPi.GPIO as GPIO
 
-servo = Servo(myGPIO)
-print("Raspberry Pi Servo");
-sleep(10)
-for i in range(0,4):
-    print("max")
-    servo.max()
-    sleep(2)
-    print("min")
-    servo.min()
-    sleep(2)
-print("Peixe alimentado");
+myGPIO=25
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(myGPIO, GPIO.OUT)
+
+
+motor = GPIO.PWM(myGPIO, 50)
+motor.start(2.5)
+
+for i in range(0,5):
+    motor.ChangeDutyCycle(5)
+    sleep(0.5)
+    motor.ChangeDutyCycle(7.5)
+    sleep(0.5)
+    motor.ChangeDutyCycle(10)
+    sleep(0.5)
+    motor.ChangeDutyCycle(12.5)
+    sleep(0.5)
+    motor.ChangeDutyCycle(10)
+    sleep(0.5)
+    motor.ChangeDutyCycle(7.5)
+    sleep(0.5)
+    motor.ChangeDutyCycle(5)
+    sleep(0.5)
+    motor.ChangeDutyCycle(2.5)
+    sleep(0.5)
