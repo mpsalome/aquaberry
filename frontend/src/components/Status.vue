@@ -129,7 +129,7 @@ export default {
           this.$buefy.toast.open({
             message: `${event.target.name.toUpperCase()} ligado`
           });
-          event.target.disabled = false;
+          this.setStatus();
           this.isLoading = false;
         });
       } else {
@@ -187,7 +187,7 @@ export default {
           title: "Atenção!",
           message:
             "Ao ligar o controle manual de temperatura o AquaBerry não cuidará mais da temperatura de seu aquário. \nDeseja continuar?",
-          confirmText: "Confirmar",
+          confirmText: "Continuar",
           cancelText: "Cancelar",
           type: "is-warning",
           iconPack: "fa",
