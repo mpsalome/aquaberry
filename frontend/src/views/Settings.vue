@@ -133,6 +133,19 @@
       >
     </div>
     <b-loading :is-full-page="true" v-model="isLoading"></b-loading>
+    <b-modal
+      v-model="isComponentModalActive"
+      has-modal-card
+      trap-focus
+      :destroy-on-hide="true"
+      aria-role="dialog"
+      aria-modal
+      :can-cancel="false"
+    >
+      <template>
+        <LoginModal />
+      </template>
+    </b-modal>
   </section>
 </template>
 
@@ -140,6 +153,7 @@
 /* eslint-disable */
 import API from "@/services/api";
 import Cleave from 'cleave.js'
+import LoginModal from "@/components/LoginModal.vue"
 
 const cleave = {
   name: 'cleave',
@@ -177,10 +191,16 @@ export default {
     };
   },
   created: function() {
-    this.setConfigTimer();
-    this.setConfigTemp();
+    this.isLogged();
+    if(!this.isComponentModalActive){
+      this.setConfigTimer();
+      this.setConfigTemp();
+    }
   },
   methods: {
+    isLogged() {
+      if(!localStorage.getItem("token"))  this.isComponentModalActive = true
+    },
     addHora (event) {
       this.horaAlimentacao.push({ value: "" });
       this.editInfo(event)

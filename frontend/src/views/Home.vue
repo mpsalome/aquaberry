@@ -7,17 +7,48 @@
     </div>
     <Status />
     <Chart />
+    <b-modal
+      v-model="isComponentModalActive"
+      has-modal-card
+      trap-focus
+      :destroy-on-hide="true"
+      aria-role="dialog"
+      aria-modal
+      :can-cancel="false"
+    >
+      <template>
+        <LoginModal />
+      </template>
+    </b-modal>
   </div>
 </template>
 
 <script>
+/* eslint-disable */
 import Chart from "@/components/Chart.vue";
 import Status from "@/components/Status.vue";
+import LoginModal from "@/components/LoginModal.vue"
+import API from "@/services/api";
+
 export default {
   name: "Home",
   components: {
     Chart,
-    Status
+    Status,
+    LoginModal
+  },
+  data() {
+    return {
+      isComponentModalActive: false
+    }
+  },
+  created: function() {
+    this.isLogged()
+  },
+  methods: {
+    isLogged() {
+      if(!localStorage.getItem("token"))  this.isComponentModalActive = true
+    }
   }
 };
 </script>
