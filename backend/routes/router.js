@@ -1,6 +1,8 @@
 import { createRequire } from 'module'
 const require = createRequire(import.meta.url)
 
+require('dotenv').config()
+
 import express from 'express'
 import ds18x20 from 'ds18x20'
 const wsserver = require('ws').Server
@@ -120,6 +122,22 @@ router.get('/configTemp', async (req, res, next) => {
     db.close(() => {
       logger.info('Conexão com o banco fechada.')
     })
+  }
+})
+
+router.post('/', async (req, res, next) => {
+  try {
+    logger.info(`POST / login`)
+    if (req.body.user === process.env.USER && req.body.password === process.env.PASSWORD ) {
+      
+      res.send('Rele desligado')
+    } else {
+      
+    }
+    
+  } catch (err) {
+    logger.info(`Erro ao desligar o relé: ${err}`)
+    next(err)
   }
 })
 
