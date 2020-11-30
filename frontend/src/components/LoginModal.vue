@@ -53,7 +53,7 @@ export default {
                 this.showDialog('Erro ao efetuar login. Tente novamente!','is-danger')
                 this.isLoading = false
               }else {
-                localStorage.setItem('token', JSON.stringify(data.data))
+                sessionStorage.setItem('token', JSON.stringify(data.data))
                 this.isLoading = false
                 this.$parent.close()
               }

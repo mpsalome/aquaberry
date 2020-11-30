@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     isLogged() {
-      if(!localStorage.getItem("token"))  this.isComponentModalActive = true
+      if(!sessionStorage.getItem("token"))  this.isComponentModalActive = true
     }
   }
 };

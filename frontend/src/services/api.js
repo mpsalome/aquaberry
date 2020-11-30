@@ -89,7 +89,7 @@ export default {
       });
   },
   postVerifyJWT() {
-    let teste = localStorage.getItem("token");
+    let teste = sessionStorage.getItem("token");
     return axios
       .post(`${IP}/verifyJWT`, teste)
       .then(response => {
