@@ -1,7 +1,7 @@
 <template>
   <div class="box__status row">
     <div class="col-12">
-      <p>Hora atual do sistema: {{ status.hora }}</p>
+      <p>Hora atual do sistema: {{ formatHora() }}</p>
     </div>
     <div class="col-12">
       Controle manual de temperatura
@@ -105,9 +105,21 @@ export default {
     setStatus() {
       this.isLoading = true;
       API.getStatusReles().then(value => {
+        value.hora = this.formatHora(value)
         this.status = value;
         this.isLoading = false;
       });
+    },
+    formatHora(value = this.status) {
+      let formatedHora = []
+        value.hora.split(':', 2).forEach(hora => {
+          if (hora.length === 1) {
+            formatedHora.push("0" + hora)
+          }else {
+            formatedHora.push(hora)
+          }
+        });
+        return formatedHora.join(":")
     },
     inputToggle(event) {
       this.isLoading = true;

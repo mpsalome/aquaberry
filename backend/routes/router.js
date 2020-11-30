@@ -564,6 +564,7 @@ const setOptions = () => {
       console.log('Conexão com o banco fechada.')
       console.log('handleIluminacao')
       handleIluminacao()
+      handleAlimentacao()
     })
   }
 }
@@ -579,14 +580,13 @@ desligarRele(enumRelays.AQUECEDOR)
 desligarRele(enumRelays.LED)
 desligarRele(enumRelays.COOLER)
 
-
 // Verificar temperatura a cada 10 segundos e aquecer ou arrefecer caso seja necessário
 setInterval(handleTemperatura, 10000)
 
-// Verificar a cada meia hora o horário pra cuidar da iluminação do áquario 
-setInterval(handleIluminacao, 1800000) 
+// Verificar a cada 30 segundos o horário pra cuidar da iluminação do áquario 
+setInterval(handleIluminacao, 30000) 
 
-// Verificar a cada meia hora o horário pra cuidar da alimentação do peixe 
-setInterval(handleAlimentacao, 1800000) 
+// Verificar a cada 30 segundos o horário pra cuidar da alimentação do peixe 
+setInterval(handleAlimentacao, 30000) 
 
 export default router
