@@ -14,6 +14,7 @@ const I2C = require('raspi-i2c').I2C
 const ADS1x15 = require('raspi-kit-ads1x15')
 const sensor = ds18x20
 const childProcess = require("child_process");
+const jwt = require('jsonwebtoken');
 
 const router = express.Router()
 
@@ -125,20 +126,17 @@ router.get('/configTemp', async (req, res, next) => {
   }
 })
 
-router.post('/', async (req, res, next) => {
-  try {
-    logger.info(`POST / login`)
-    if (req.body.user === process.env.USER && req.body.password === process.env.PASSWORD ) {
-      
-      res.send('Rele desligado')
-    } else {
-      
-    }
-    
-  } catch (err) {
-    logger.info(`Erro ao desligar o relé: ${err}`)
-    next(err)
+router.post('/login', (req, res, next) => {
+  if (req.body.user === process.env.USER && req.body.password === process.env.PASSWORD ) {
+    //auth ok
+    const id = 1; //esse id viria do banco de dados
+    const token = jwt.sign({ id }, process.env.SECRET, {
+      expiresIn: '1d'
+    });
+    return res.json({ auth: true, token: token });
   }
+  
+  res.status(500).json({message: 'Login inválido!'});
 })
 
 router.post('/releOff', async (req, res, next) => {
