@@ -6,6 +6,7 @@
     <b-tooltip label="Temperatura Máxima do aquário">
       <b-field>
         <b-input
+          required
           placeholder="Temperatura Máxima"
           type="number"
           icon-pack="fas"
@@ -27,6 +28,7 @@
     <b-tooltip label="Temperatura Ideal do aquário">
       <b-field>
         <b-input
+          required
           placeholder="Temperatura Ideal"
           type="number"
           icon-pack="fas"
@@ -48,6 +50,7 @@
     <b-tooltip label="Temperatura Mínima do aquário">
       <b-field>
         <b-input
+          required
           placeholder="Temperatura Mínima"
           type="number"
           icon-pack="fas"
@@ -70,6 +73,7 @@
     <b-tooltip label="Horário de Alimentação">
       <b-field v-for="(hora, index) in horaAlimentacao" :key="index">
         <b-input
+          required
           placeholder="Horário de alimentação do peixe"
           icon-pack="far"
           icon="clock"
@@ -95,6 +99,7 @@
     <b-tooltip label="Hora de ínicio do ciclo de luz">
       <b-field>
         <b-input
+          required
           placeholder="Hora Inicio"
           icon-pack="far"
           icon="sun"
@@ -116,6 +121,7 @@
     <b-tooltip label="Hora de fim do ciclo de luz">
       <b-field>
         <b-input
+          required
           placeholder="Hora Fim"
           icon-pack="far"
           icon="moon"
@@ -192,6 +198,7 @@ export default {
       infoEdit: false,
       actionsMade: [],
       deletedHora: [],
+      isComponentModalActive: false,
       masks: {
         time: {
             delimiters: [':', ':'],
@@ -277,67 +284,72 @@ export default {
       }
     }, 
     sendNewInfo(){
-     if (this.actionsMade.includes('maxTemp') || this.actionsMade.includes('idealTemp') || this.actionsMade.includes('minTemp')) {
-        this.isLoading = true;
-        API.putConfigTemp({tempmin: this.minTemp, tempideal: this.idealTemp,tempmax: this.maxTemp}).then(data => {
-          this.showDialog("Informações salvas.", "is-success")
-          document.querySelectorAll('div.control > input').forEach(el => {
-            el.disabled = true
-          })
-          this.isLoading = false;
-        });
-      } 
-      if (this.actionsMade.includes('startTime')) {
-          this.isLoading = true;
-          API.putConfigTimer({idsensor: "5", acao: "0", hora: `${this.iniLuz}`}).then(data => {
-            this.showDialog("Informações salvas.", "is-success")
-            document.querySelectorAll('div.control > input').forEach(el => {
-              el.disabled = true
-            })
-            this.isLoading = false;
-          });
-      } 
-      if (this.actionsMade.includes('endTime')) {
-          this.isLoading = true;
-          API.putConfigTimer({idsensor: "5", acao: "1", hora: `${this.fimLuz}`}).then(data => {
-            this.showDialog("Informações salvas.", "is-success")
-            document.querySelectorAll('div.control > input').forEach(el => {
-              el.disabled = true
-            })
-            this.isLoading = false;
-          });
-      } 
-      if (this.actionsMade.includes('deleteTimer')) {
-          this.isLoading = true;
-          let itensProcessed = 0
-          this.deletedHora.forEach((hora, index, array) => {
-              let timer = {acao: 0, hora: hora.value}
-              console.log(timer)
-              API.deleteConfigTimer(timer).then(data => {
+      if(!this.maxTemp || !this.minTemp || !this.horaAlimentacao || !this.iniLuz || !this.fimLuz || !this.idealTemp){
+        this.showDialog('Por favor preencha todos os campos!', 'is-warning');
+      }else {
+        if (this.actionsMade.includes('maxTemp') || this.actionsMade.includes('idealTemp') || this.actionsMade.includes('minTemp')) {
+            this.isLoading = true;
+            API.putConfigTemp({tempmin: this.minTemp, tempideal: this.idealTemp,tempmax: this.maxTemp}).then(data => {
+              this.showDialog("Informações salvas.", "is-success")
+              document.querySelectorAll('div.control > input').forEach(el => {
+                el.disabled = true
+              })
+              this.isLoading = false;
+            });
+          }
+          if (this.actionsMade.includes('startTime')) {
+              this.isLoading = true;
+              API.putConfigTimer({idsensor: "5", acao: "0", hora: `${this.iniLuz}`}).then(data => {
                 this.showDialog("Informações salvas.", "is-success")
                 document.querySelectorAll('div.control > input').forEach(el => {
                   el.disabled = true
                 })
-                itensProcessed++
-                if (itensProcessed === array.length) {
-                  this.isLoading = false;
-                }
-            });
-          });
-      }
-      if (this.actionsMade.includes('newTimer')) {
-        this.isLoading = true;
-        let itensProcessed = 0
-        this.horaAlimentacao.forEach((hora, index, array) => {
-          API.postNewFeedTime({hora: hora.value}).then(data => {
-            this.showDialog("Informações salvas.", "is-success")
-            document.querySelectorAll('div.control > input').forEach(el => {
-              el.disabled = true
+                this.isLoading = false;
+              });
+          } 
+          if (this.actionsMade.includes('endTime')) {
+              this.isLoading = true;
+              API.putConfigTimer({idsensor: "5", acao: "1", hora: `${this.fimLuz}`}).then(data => {
+                this.showDialog("Informações salvas.", "is-success")
+                document.querySelectorAll('div.control > input').forEach(el => {
+                  el.disabled = true
+                })
+                this.isLoading = false;
+              });
+          } 
+          if (this.actionsMade.includes('deleteTimer')) {
+              this.isLoading = true;
+              let itensProcessed = 0
+              this.deletedHora.forEach((hora, index, array) => {
+                  let timer = {acao: 0, hora: hora.value}
+                  console.log(timer)
+                  API.deleteConfigTimer(timer).then(data => {
+                    this.showDialog("Informações salvas.", "is-success")
+                    document.querySelectorAll('div.control > input').forEach(el => {
+                      el.disabled = true
+                    })
+                    itensProcessed++
+                    if (itensProcessed === array.length) {
+                      this.isLoading = false;
+                    }
+                });
+              });
+          }
+          if (this.actionsMade.includes('newTimer')) {
+            this.isLoading = true;
+            let itensProcessed = 0
+            this.horaAlimentacao.forEach((hora, index, array) => {
+              API.postNewFeedTime({hora: hora.value}).then(data => {
+                this.showDialog("Informações salvas.", "is-success")
+                document.querySelectorAll('div.control > input').forEach(el => {
+                  el.disabled = true
+                })
+                this.isLoading = false;
+              })
             })
-            this.isLoading = false;
-          })
-        })
-      } 
+          }
+      }
+
     },
     showDialog(message, type, ) {
       this.$buefy.toast.open({
