@@ -54,8 +54,8 @@ export default {
                 this.isLoading = false
               }else {
                 sessionStorage.setItem('token', JSON.stringify(data.data))
-                this.isLoading = false
                 this.$parent.close()
+                this.isLoading = false
               }
             })
         }
@@ -74,4 +74,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.modal-close, .delete {
+  display: none;
+}
 </style>
