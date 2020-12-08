@@ -294,6 +294,36 @@ router.put("/configTimer", async (req, res, next) => {
   }
 })
 
+router.put("/changePassword", async (req, res, next) => {
+  if ( !req.body.usuario || !req.body.password || !req.body.serial) {
+    throw new Error("usuario, senha e serial são obrigatórios")
+  }
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) throw err
+    console.log('Conectado ao banco.')
+  })
+  try {
+    logger.info(`PUT: /changePassword`)
+    db.run(`UPDATE ConfigTimer SET senha=? WHERE usuario=? and serial=?`, [req.body.senha, req.body.usuario,req.body.serial], (err) => {
+      if (err) {
+        throw err
+       } else {
+        res.status(200).send({ status: 'success', message: 'Updated' })
+        setOptions()
+       }
+    })
+  } catch (err) {
+       logger.error(`Erro ao alterar a senha: ${err}`)
+       res.status(500).send({status: 'error', err: err})
+  }
+  finally {
+    db.close( () => {
+      logger.info('Conexão com o banco fechada')
+    })
+  }
+})
+
+
 router.delete("/configTimer/:acao/:hora", async (req, res, next) => {
   if ( !req.params.acao || !req.params.hora ) {
     throw new Error("acao e hora são obrigatórios")
