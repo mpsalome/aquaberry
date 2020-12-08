@@ -56,6 +56,7 @@ export default {
                 sessionStorage.setItem('token', JSON.stringify(data.data))
                 this.$parent.close()
                 this.isLoading = false
+                router.push('Home')
               }
             })
         }
