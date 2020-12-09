@@ -208,6 +208,9 @@ export default {
       }
     };
   },
+  components: {
+    LoginModal
+  },
   created: function() {
     this.isLogged();
     if(!this.isComponentModalActive){
