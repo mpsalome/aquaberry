@@ -295,8 +295,8 @@ router.put("/configTimer", async (req, res, next) => {
 })
 
 router.put("/changePassword", async (req, res, next) => {
-  if ( !req.body.usuario || !req.body.password || !req.body.serial) {
-    throw new Error("usuario, senha e serial são obrigatórios")
+  if (!req.body.id || !req.body.usuario || !req.body.password || !req.body.serial) {
+    throw new Error("id, usuario, senha e serial são obrigatórios")
   }
   let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
     if (err) throw err
@@ -304,7 +304,7 @@ router.put("/changePassword", async (req, res, next) => {
   })
   try {
     logger.info(`PUT: /changePassword`)
-    db.run(`UPDATE ConfigTimer SET senha=? WHERE usuario=? and serial=?`, [req.body.senha, req.body.usuario,req.body.serial], (err) => {
+    db.run(`UPDATE ConfigTimer SET senha=? WHERE usuario=? and serial=? and id=?`, [req.body.senha, req.body.usuario,req.body.serial, req.body.id], (err) => {
       if (err) {
         throw err
        } else {
@@ -322,7 +322,6 @@ router.put("/changePassword", async (req, res, next) => {
     })
   }
 })
-
 
 router.delete("/configTimer/:acao/:hora", async (req, res, next) => {
   if ( !req.params.acao || !req.params.hora ) {
