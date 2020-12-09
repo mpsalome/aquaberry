@@ -314,22 +314,31 @@ router.put("/configTimer", async (req, res, next) => {
 })
 
 router.put("/changePassword", async (req, res, next) => {
+  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) throw err
+    console.log('Conectado ao banco.')
+  })
   try {
-    if (!req.body.idusuario || !req.body.usuario || !req.body.senha || !req.body.serial) {
-      throw new Error("idusuario, usuario, senha e serial são obrigatórios")
+    if (!req.body.idusuario || !req.body.usuario || !req.body.senhaAtual || !req.body.serial || !req.body.novaSenha) {
+      throw new Error("idusuario, usuario, senhaAtual, novaSenha e serial são obrigatórios")
     }
-    let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
-      if (err) throw err
-      console.log('Conectado ao banco.')
-    })
     logger.info(`PUT: /changePassword`)
-    db.run(`UPDATE Login SET senha=? WHERE usuario=? and serial=? and idusuario=?`, [req.body.senha, req.body.usuario,req.body.serial, req.body.idusuario], (err) => {
-      if (err) {
-        throw err
-       } else {
-        res.status(200).send({ status: 'success', message: 'Updated' })
-        setOptions()
-       }
+    db.get(`SELECT idusuario FROM Login WHERE usuario=? and serial=? and idusuario=? and senha=?`, [req.body.usuario,req.body.serial, req.body.idusuario, req.body.senhaAtual], (err, row) => {
+      if(err) throw err
+      if (row) {
+        db.run(`UPDATE Login SET senha=? WHERE usuario=? and serial=? and idusuario=? and senha=?`, [req.body.novaSenha, req.body.usuario,req.body.serial, req.body.idusuario, req.body.senhaAtual], (err) => {
+          if (err) {
+            throw err
+           } 
+           else {
+            res.status(200).send({ status: 'success', message: 'Updated' })
+            setOptions()
+           }
+        })
+      }
+      else {
+        res.status(500).json({message: 'Error: Usuário não encontrado'}).send();
+      }
     })
   } catch (err) {
        logger.error(`Erro ao alterar a senha: ${err}`)
