@@ -48,7 +48,7 @@ export default {
     login() {
         if (this.user && this.password) {
             this.isLoading = true
-            API.postLogin({user: this.user, password: this.password}).then(data =>{
+            API.postLogin({usuario: this.user, senha: this.password}).then(data =>{
               if(data.toString().includes('Error')) {
                 this.showDialog('Erro ao efetuar login. Tente novamente!','is-danger')
                 this.isLoading = false
@@ -56,7 +56,7 @@ export default {
                 sessionStorage.setItem('token', JSON.stringify(data.data))
                 this.$parent.close()
                 this.isLoading = false
-                router.push('Home')
+                this.$router.push('/')
               }
             })
         }
