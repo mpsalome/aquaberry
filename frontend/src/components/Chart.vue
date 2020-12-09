@@ -17,7 +17,7 @@
         />
         <p class="gauge__text">Temperatura: {{ temperatura }}ºC</p>
       </div>
-      <div class="gauge__box col-10 col-md-6 d-none">
+      <div class="gauge__box col-10 col-md-6">
         <VueSvgGauge
           :start-angle="-110"
           :end-angle="110"
@@ -27,13 +27,17 @@
           :max="14"
           :gauge-color="[
             { offset: 0, color: '#ff0000' },
-            { offset: 100, color: '#5b0eb3' }
+            { offset: 14, color: '#5b0eb3' }
           ]"
           :scale-interval="1"
         />
         <p class="gauge__text">pH: {{ ph }}</p>
+        <b-button class="gauge__button" @click="setPh" type="is-info"
+          >Ler pH</b-button
+        >
       </div>
     </div>
+    <b-loading :is-full-page="false" v-model="isLoading"></b-loading>
   </div>
 </template>
 
@@ -47,10 +51,12 @@ export default {
   data: function() {
     return {
       temperatura: 0,
-      ph: 5
+      ph: 0,
+      isLoading: false
     };
   },
   created: function() {
+      this.setPh()
       var wsTemp = new WebSocket(`ws://${process.env.VUE_APP_IP}:3011/`);
       wsTemp.onmessage = event => {
         let data = JSON.parse(event.data)
@@ -72,6 +78,13 @@ export default {
         ariaRole,
         ariaModal: true
       });
+    },
+    setPh(){
+      this.isLoading = true
+      API.getPh().then(data=>{
+        this.ph = data
+        this.isLoading = false
+      })
     }
   }
 };
@@ -88,6 +101,10 @@ export default {
       position: relative;
       bottom: 35%;
       font-size: 0.8em;
+    }
+    .gauge__button {
+      position: relative;
+      bottom: 35%;
     }
   }
 }
