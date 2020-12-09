@@ -127,22 +127,22 @@ router.get('/configTemp', async (req, res, next) => {
 })
 
 router.post('/login', (req, res, next) => {
-  if (!req.body.idusuario || !req.body.usuario || !req.body.senha ) {
+  if ( !req.body.usuario || !req.body.senha ) {
     throw new Error("usuario e senha  são obrigatórios")
   }else {
   try {
-      let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READONLY, (err) => {
+      var db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READONLY, (err) => {
         if (err) throw err
         console.log('Conectado ao banco.')
       })
       db.get(`SELECT idusuario FROM Login where usuario=? AND senha=? `, [req.body.usuario, req.body.senha], (err, row) => {
         if(err) throw err
         if (row) {
-          const id = req.body.idusuario
+          const id = row.idusuario 
           const token = jwt.sign({ id }, process.env.SECRET, {
             expiresIn: '1d'
           });
-          res.send(JSON.stringify({ auth: true, token: token, idusuario:row.id }))
+          res.send(JSON.stringify({ auth: true, token: token, idusuario: id }))
         }
         else {
           res.status(500).json({message: 'Login inválido!'}).send();
