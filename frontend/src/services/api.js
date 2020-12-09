@@ -99,6 +99,16 @@ export default {
         return error;
       });
   },
+  putChangePassword(info) {
+    return axios
+      .put(`${IP}/changePassword`, info)
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        return error;
+      });
+  },
   putConfigTemp(tempInfo) {
     return axios
       .put(`${IP}/configTemp`, tempInfo)

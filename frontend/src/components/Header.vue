@@ -22,6 +22,11 @@ export default {
           href: "/configuracoes",
           title: "Configurações",
           icon: "fa fa-cog"
+        },
+        {
+          href: "/alterar-senha",
+          title: "Alterar Senha",
+          icon: "fa fa-key"
         }
       ]
     };
