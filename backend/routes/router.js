@@ -9,12 +9,10 @@ const wsserver = require('ws').Server
 const wss = new wsserver({ port: 3011 })
 const gpio = require('onoff').Gpio
 const sqlite3 = require('sqlite3').verbose()
-const Raspi = require('raspi')
-const I2C = require('raspi-i2c').I2C
-const ADS1x15 = require('raspi-kit-ads1x15')
 const sensor = ds18x20
 const childProcess = require("child_process");
 const jwt = require('jsonwebtoken');
+const {spawn} = require('child_process')
 
 const router = express.Router()
 
@@ -32,8 +30,6 @@ const enumRelays = {
   COOLER: 3,
 }
 
-var phObj = { ph: 0 }
-
 var modoManual = { temperatura: false, iluminacao: false }
 
 var options = {
@@ -42,7 +38,8 @@ var options = {
   IDEAL_TEMP: 0,
   ON_LUZ: 0,
   OFF_LUZ: 0,
-  ALIMENTACAO: []
+  ALIMENTACAO: [],
+  PH: 0
 }
 // Rotas
 router.get('/temperatura', async (req, res, next) => {
@@ -60,9 +57,9 @@ router.get('/temperatura', async (req, res, next) => {
 router.get('/ph', async (req, res, next) => {
   try {
     lerPh()
-    console.log(`Leitura de pH requisitada pela rota: ${phObj.ph}`)
-    res.send(phObj.ph.toString())
-    logger.info(`GET /ph: ${JSON.stringify(phObj.ph.toString())}`)
+    console.log(`Leitura de pH requisitada pela rota: ${options.PH}`)
+    res.send(options.PH.toString())
+    logger.info(`GET /ph: ${options.PH.toString()}`)
   } catch (err) {
     logger.info(`Erro ao ler o ph: ${err}`)
     next(err)
@@ -511,37 +508,16 @@ const enviarInfo = (socket) => {
 
 //ler ph do sensor
 const lerPh = () => {
-  try {
-    Raspi.init(() => {
-      const i2c = new I2C()
+  let python = spawn('python3', ['./leitor_ph.py'])
+  python.stdout.on('data', function (data) {
+    console.log('pH do aquario: ', data.toString())
+    options.PH =  data.toString()
+  });
+  python.on('close', (code) => {
+      console.log(`child process close all stdio with code ${code}`);
+  });
 
-      const adc = new ADS1x15({
-        i2c, // i2c interface
-        chip: ADS1x15.chips.IC_ADS1015, // chip model
-        address: ADS1x15.address.ADDRESS_0x48, // i2c address on the bus
-
-        // Defaults for future readings
-        pga: ADS1x15.pga.PGA_4_096V, // power-gain-amplifier range
-        sps: ADS1x15.spsADS1015.SPS_250, // data rate (samples per second)
-      })
-
-      adc.readChannel(ADS1x15.channel.CHANNEL_0, (err, value, volts) => {
-        phObj.ph = 1
-        if (err) {
-          console.error(`Falha ao tentar ler o pH: ${err}`)
-          process.exit(1)
-        } else {
-          console.log('Volts', volts)
-          console.log('Value', value)
-          phObj.ph = value
-        }
-      })
-    })
-  } catch (err) {
-    console.error(`Falha ao tentar ler o pH: ${err}`)
-  }
 }
-
 
 const handleIluminacao = () => {
   let date = new Date()
@@ -661,5 +637,8 @@ setInterval(handleIluminacao, 30000)
 
 // Verificar a cada 30 segundos o horário pra cuidar da alimentação do peixe 
 setInterval(handleAlimentacao, 30000) 
+
+// Lê e salva as informações de pH no startup 
+lerPh()
 
 export default router
