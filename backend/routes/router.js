@@ -314,16 +314,16 @@ router.put("/configTimer", async (req, res, next) => {
 })
 
 router.put("/changePassword", async (req, res, next) => {
-  if (!req.body.idusuario || !req.body.usuario || !req.body.password || !req.body.serial) {
-    throw new Error("idusuario, usuario, senha e serial são obrigatórios")
-  }
-  let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
-    if (err) throw err
-    console.log('Conectado ao banco.')
-  })
   try {
+    if (!req.body.idusuario || !req.body.usuario || !req.body.senha || !req.body.serial) {
+      throw new Error("idusuario, usuario, senha e serial são obrigatórios")
+    }
+    let db = new sqlite3.Database('../../../aquaberry.db', sqlite3.OPEN_READWRITE, (err) => {
+      if (err) throw err
+      console.log('Conectado ao banco.')
+    })
     logger.info(`PUT: /changePassword`)
-    db.run(`UPDATE ConfigTimer SET senha=? WHERE usuario=? and serial=? and idusuario=?`, [req.body.senha, req.body.usuario,req.body.serial, req.body.idusuario], (err) => {
+    db.run(`UPDATE Login SET senha=? WHERE usuario=? and serial=? and idusuario=?`, [req.body.senha, req.body.usuario,req.body.serial, req.body.idusuario], (err) => {
       if (err) {
         throw err
        } else {
@@ -333,7 +333,7 @@ router.put("/changePassword", async (req, res, next) => {
     })
   } catch (err) {
        logger.error(`Erro ao alterar a senha: ${err}`)
-       res.status(500).send({status: 'error', err: err})
+       res.status(500).send({status: 'error', err: `${err}`})
   }
   finally {
     db.close( () => {
